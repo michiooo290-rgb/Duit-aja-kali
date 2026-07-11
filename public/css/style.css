@@ -785,6 +785,7 @@ select option { background: var(--bg-raised); color: var(--text-primary); }
 }
 
 /* ===================== BOTTOM NAV ===================== */
+.bottom-nav { display: none; }
 @media (max-width: 768px) {
   .bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
