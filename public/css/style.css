@@ -819,33 +819,63 @@ select option { background: var(--bg-raised); color: var(--text-primary); }
     animation: fadeIn 0.25s both;
   }
   .more-menu-panel {
-    position: fixed; bottom: 0; left: 0; right: 0;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: min(78vw, 320px);
     background: var(--bg-raised);
-    border-top: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
+    border-right: 1px solid var(--border);
     z-index: 301;
-    padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
-    animation: slideUp 0.3s var(--transition) both;
+    display: flex; flex-direction: column;
+    padding: calc(20px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom));
+    animation: slideInMenuLeft 0.32s var(--transition) both;
+    overflow-y: auto;
   }
-  .more-menu-handle {
-    width: 40px; height: 4px;
-    background: var(--border-mid); border-radius: 2px;
-    margin: 0 auto 16px;
+  @keyframes slideInMenuLeft {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
   }
-  .more-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .more-menu-item {
+  .more-menu-header {
     display: flex; align-items: center; gap: 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    padding: 0 20px 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .more-menu-header-logo {
+    width: 34px; height: 34px; flex-shrink: 0;
+    background: var(--accent);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .more-menu-header-logo svg path,
+  .more-menu-header-logo svg circle { stroke: var(--accent-text); }
+  .more-menu-header-logo svg circle { fill: var(--accent-text); }
+  .more-menu-header-text { flex: 1; min-width: 0; }
+  .more-menu-title { font-family: var(--font); font-size: 13px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.02em; }
+  .more-menu-subtitle { font-size: 10.5px; color: var(--text-tertiary); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .more-menu-close {
+    background: none; border: none; font-size: 20px; line-height: 1;
+    color: var(--text-secondary); cursor: pointer; padding: 4px 6px; flex-shrink: 0;
+  }
+  .more-menu-list { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; }
+  .more-menu-item {
+    display: flex; align-items: center; gap: 12px;
+    background: transparent;
+    border: 1px solid transparent;
     border-radius: 12px;
-    padding: 14px 16px;
-    font-family: var(--font); font-size: 13px; font-weight: 600;
-    color: var(--text-primary); cursor: pointer;
+    padding: 13px 14px;
+    font-family: var(--font); font-size: 14.5px; font-weight: 600;
+    color: var(--text-secondary); cursor: pointer;
     transition: all 0.15s;
     position: relative;
+    text-align: left;
   }
   .more-menu-item:active { background: var(--surface-hover); }
-  .more-menu-icon { font-size: 20px; display: flex !important; align-items: center !important; justify-content: center !important; width: 24px; height: 24px; flex-shrink: 0; }
+  .more-menu-item.active {
+    background: var(--bg);
+    border-color: var(--border-mid);
+    color: var(--text-primary);
+  }
+  .more-menu-label { flex: 1; }
+  .more-menu-icon { font-size: 18px; display: flex !important; align-items: center !important; justify-content: center !important; width: 22px; height: 22px; flex-shrink: 0; }
 }
 
 /* ===================== AVATAR PICKER ===================== */

@@ -866,6 +866,18 @@ select option {
 .more-menu-item {
   color: var(--color-ink) !important;
   font-weight: 750 !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.more-menu-item.active {
+  background: var(--color-paper) !important;
+  border: var(--rule-hairline) !important;
+}
+
+.more-menu-panel {
+  border-right: var(--rule-hairline) !important;
+  border-radius: 0 !important;
 }
 
 /* Receipt injected UI */

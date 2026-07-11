@@ -1230,6 +1230,10 @@ function openMoreMenu() {
   const due = getDueRecurringCount();
   const badge = document.getElementById('more-recurring-badge');
   if (badge) { badge.textContent = due; badge.style.display = due > 0 ? 'flex' : 'none'; }
+  // highlight item matching the current page
+  document.querySelectorAll('.more-menu-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === _currentPage);
+  });
 }
 
 function closeMoreMenu() {
