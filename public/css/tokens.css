@@ -1,0 +1,78 @@
+/* ============================================================
+   TOKENS.CSS — Duit Tracker Pro
+   Hallmark design system · paper ledger workbench
+   anchor hue: ledger-teal oklch(45% 0.105 176)
+   paper: oklch(95.5% 0.018 88)
+   ============================================================ */
+
+/* ── Google Fonts (DM Sans + Lora already loaded via index.html) ── */
+
+:root {
+  /* ── Color — Light (default) ── */
+  --color-paper:        oklch(95.5% 0.018 88);     /* warm off-white */
+  --color-paper-2:      oklch(91.5% 0.022 85);     /* slightly deeper warm */
+  --color-surface:      oklch(98%   0.010 88);     /* near-white card */
+  --color-surface-2:    oklch(93%   0.018 86);     /* hovered surface */
+  --color-ink:          oklch(22%   0.020 64);     /* near-black warm */
+  --color-muted:        oklch(52%   0.018 70);     /* mid-tone */
+  --color-rule:         oklch(80%   0.018 80);     /* hairline */
+  --color-rule-strong:  oklch(65%   0.020 75);     /* strong rule */
+
+  /* ── Accent — ledger-teal ── */
+  --color-accent:       oklch(45%   0.105 176);    /* primary teal */
+  --color-accent-2:     oklch(35%   0.090 176);    /* darker teal for hover */
+  --color-focus:        oklch(55%   0.120 176);    /* focus ring */
+
+  /* ── Semantic ── */
+  --color-success:      oklch(48%   0.110 152);    /* sage green */
+  --color-danger:       oklch(52%   0.110  42);    /* earth red-brown */
+  --color-warning:      oklch(62%   0.100  72);    /* amber */
+
+  /* ── Rule shorthands ── */
+  --rule-hairline: 1px solid var(--color-rule);
+  --rule-strong:   1.5px solid var(--color-rule-strong);
+
+  /* ── Typography ── */
+  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Lora', Georgia, serif;
+  --font-label:   'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    'Courier New', Courier, monospace;
+
+  /* ── Type scale ── */
+  --text-xs:  0.6875rem;   /* 11px */
+  --text-sm:  0.8125rem;   /* 13px */
+  --text-md:  1rem;        /* 16px */
+  --text-lg:  1.125rem;    /* 18px */
+
+  /* ── Radii ── */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-pill: 999px;
+
+  /* ── Motion ── */
+  --dur-short:  120ms;
+  --dur-medium: 220ms;
+  --ease-out:   cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── Dark mode token overrides ── */
+[data-theme="dark"] {
+  --color-paper:        oklch(15%   0.015 64);
+  --color-paper-2:      oklch(19%   0.018 64);
+  --color-surface:      oklch(20%   0.016 64);
+  --color-surface-2:    oklch(24%   0.018 64);
+  --color-ink:          oklch(92%   0.012 80);
+  --color-muted:        oklch(58%   0.018 75);
+  --color-rule:         oklch(32%   0.018 70);
+  --color-rule-strong:  oklch(45%   0.020 68);
+
+  --color-accent:       oklch(60%   0.105 176);
+  --color-accent-2:     oklch(70%   0.090 176);
+  --color-focus:        oklch(65%   0.120 176);
+
+  --color-success:      oklch(62%   0.110 152);
+  --color-danger:       oklch(66%   0.110  42);
+  --color-warning:      oklch(72%   0.095  72);
+}

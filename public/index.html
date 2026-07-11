@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Duit Tracker Pro</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/kalender.css">
+  <link rel="stylesheet" href="css/hallmark-override.css">
+  <style>
+    /* Emoji icon system */
+    .em-icon { user-select:none; pointer-events:none; }
+
+    /* Nav button top */
+    .nav-btn { display:flex; align-items:center; justify-content:center; gap:5px; }
+
+    /* Bottom nav icon wrapper */
+    .bnav-icon {
+      display:flex; align-items:center; justify-content:center;
+      width:26px; height:26px; flex-shrink:0;
+    }
+    .bnav-icon .em-icon { font-size:22px !important; width:auto !important; height:auto !important; }
+
+    /* More menu icon wrapper */
+    .more-menu-icon {
+      display:flex; align-items:center; justify-content:center;
+      width:26px; height:26px; flex-shrink:0;
+    }
+    .more-menu-icon .em-icon { font-size:22px !important; width:auto !important; height:auto !important; }
+
+    /* Topbar & login logo */
+    .topbar-logo, .login-left-logo-icon {
+      display:flex; align-items:center; justify-content:center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div id="login-screen">
+  <div class="login-wrap">
+
+    <!-- LEFT -->
+    <div class="login-left">
+
+      <div class="login-left-top">
+        <div class="login-left-logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" stroke-width="1.5" fill="none"/><path d="M12 6v6l5 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="white"/></svg></div>
+        <span class="login-left-brand">Duit Tracker Pro</span>
+      </div>
+
+      <div class="login-left-bottom">
+        <div class="login-left-eyebrow">Kelola keuanganmu</div>
+        <div class="login-left-headline">
+          Catat setiap <em>rupiah,</em><br>raih setiap tujuan.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="login-right">
+      <h1 class="login-title">Masuk ke akun</h1>
+      <p class="login-sub">Masukkan PIN untuk melanjutkan ke dashboard.</p>
+
+      <span class="login-label">Akun</span>
+      <div class="single-account">
+        <div class="single-account-avatar" id="login-avatar" style="overflow:hidden;display:flex;align-items:center;justify-content:center">👤</div>
+        <div>
+          <div class="single-account-name" id="login-name">Pengguna</div>
+          <div class="single-account-role">Akun Utama</div>
+        </div>
+      </div>
+
+      <span class="login-label">PIN (4 digit)</span>
+      <div class="pin-row">
+        <div class="pin-dots" id="pin-dots">
+          <div class="pin-dot" data-idx="0"></div>
+          <div class="pin-dot" data-idx="1"></div>
+          <div class="pin-dot" data-idx="2"></div>
+          <div class="pin-dot" data-idx="3"></div>
+        </div>
+        <input class="pin-input pin-input-hidden" type="password" id="pin-input"
+          maxlength="4" inputmode="numeric" pattern="[0-9]*"
+          placeholder="" onkeydown="if(event.key==='Enter') { if(typeof doLogin==='function') doLogin(); }"
+          oninput="updatePinDots()">
+      </div>
+      <div class="login-error" id="login-error">❌ PIN salah, coba lagi.</div>
+
+      <button class="login-btn" onclick="if(typeof doLogin==='function') doLogin(); else setTimeout(doLogin,100)">Masuk →</button>
+
+      <!-- Success ripple overlay -->
+      <div class="login-success-overlay" id="login-success-overlay"></div>
+
+      <p class="login-hint">💡 PIN default: <strong>1234</strong> · Bisa diubah di Pengaturan</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div class="app-shell">
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" stroke-width="1.5" fill="none"/><path d="M12 6v6l5 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="white"/></svg></div>
+      <div>
+        <div class="topbar-title">Duit Tracker Pro</div>
+        <div class="topbar-sub">Catat · Sadar · Kontrol · Berkembang</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <!-- GLOBAL SEARCH -->
+      <div class="global-search-wrap" id="global-search-wrap">
+        <button class="global-search-trigger" id="global-search-trigger" onclick="openGlobalSearch()" title="Cari transaksi [ / ]"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;font-size:17px;line-height:1">🔍</span></button>
+        <div class="global-search-box" id="global-search-box" style="display:none">
+          <span class="gsearch-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;font-size:15px;line-height:1">🔍</span></span>
+          <input type="text" id="global-search-input" class="gsearch-input"
+            placeholder="Cari transaksi, kategori..."
+            oninput="renderGlobalSearch()"
+            onkeydown="handleGlobalSearchKey(event)">
+          <button class="gsearch-close" onclick="closeGlobalSearch()">✕</button>
+        </div>
+        <div class="global-search-results" id="global-search-results" style="display:none"></div>
+      </div>
+      <div class="topbar-date" id="topbar-date"></div>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Ganti tema"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;font-size:18px;line-height:1">🌙</span></button>
+      <div class="user-badge" onclick="logout()" style="cursor:pointer">
+        <div class="user-badge-avatar" id="topbar-avatar" style="overflow:hidden;display:flex;align-items:center;justify-content:center">👤</div>
+        <div>
+          <div id="topbar-username">Pengguna</div>
+          <div class="user-badge-logout">Logout →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showPage('dashboard',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🏠</span> Dashboard</button>
+    <button class="nav-btn" onclick="showPage('catat',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">✏️</span> Catat</button>
+    <button class="nav-btn" onclick="showPage('berulang',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🔁</span> Berulang</button>
+    <button class="nav-btn" onclick="showPage('riwayat',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📋</span> Riwayat</button>
+    <button class="nav-btn" onclick="showPage('analisa',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📊</span> Analisa</button>
+    <button class="nav-btn" onclick="showPage('ekspor',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📤</span> Ekspor</button>
+    <button class="nav-btn" onclick="showPage('tabungan',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🐷</span> Tabungan</button>
+    <button class="nav-btn" onclick="showPage('target',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🎯</span> Target</button>
+    <button class="nav-btn" onclick="showPage('pengaturan',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">⚙️</span> Pengaturan</button>
+    <button class="nav-btn" onclick="showPage('kalender',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📅</span> Kalender</button>
+  </nav>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <!-- SKELETON LOADING -->
+      <div id="dashboard-skeleton" class="skeleton-page">
+        <div class="sk-block sk-today"></div>
+        <div class="sk-grid4">
+          <div class="sk-block sk-metric"></div>
+          <div class="sk-block sk-metric"></div>
+          <div class="sk-block sk-metric"></div>
+          <div class="sk-block sk-metric"></div>
+        </div>
+        <div class="sk-grid2">
+          <div class="sk-block sk-chart"></div>
+          <div class="sk-block sk-chart"></div>
+        </div>
+        <div class="sk-block sk-list"></div>
+      </div>
+      <!-- WIDGET HARI INI -->
+      <div id="today-widget" class="today-widget glass"></div>
+      <!-- BUDGET ALERT BANNER -->
+      <div id="budget-alert-banner" class="budget-alert-banner" style="display:none"></div>
+      <div class="metric-grid" id="metrics"></div>
+      <div class="charts-grid">
+        <div class="card glass">
+          <div class="card-title">Pengeluaran per kategori</div>
+          <div class="chart-wrap"><canvas id="chartCat"></canvas></div>
+        </div>
+        <div class="card glass">
+          <div class="card-title">Tren 6 bulan</div>
+          <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+        </div>
+      </div>
+      <div class="card glass">
+        <div class="card-title">Rasio 50/30/20 bulan ini</div>
+        <div class="ratio-bar" id="ratioBar"></div>
+        <div class="ratio-legend" style="margin-bottom:10px">
+          <div class="rl-item"><div class="rl-dot" style="background:var(--primary)"></div><span id="rl-needs">Kebutuhan</span></div>
+          <div class="rl-item"><div class="rl-dot" style="background:var(--amber)"></div><span id="rl-wants">Keinginan</span></div>
+          <div class="rl-item"><div class="rl-dot" style="background:var(--green)"></div><span id="rl-savings">Tabungan</span></div>
+        </div>
+        <div id="ratio-tip" class="tip-box" style="display:none"></div>
+      </div>
+      <!-- FINANCIAL HEALTH SCORE -->
+      <div class="card glass" style="margin-top:1rem" id="health-score-card">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">💚</span> Skor Kesehatan Keuangan</div>
+        <div id="health-score-wrap"></div>
+      </div>
+
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Transaksi terbaru</div>
+        <div id="recent-list"></div>
+      </div>
+    </div>
+
+    <!-- CATAT -->
+    <div id="page-catat" class="page">
+      <div class="section-title">Catat transaksi</div>
+      <div class="card glass">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Tipe</label>
+            <select id="inp-type" onchange="updateCatOptions()">
+              <option value="out">💸 Pengeluaran</option>
+              <option value="in">💵 Pemasukan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sumber / Simpan Di</label>
+            <select id="inp-wallet">
+              <option value="mbanking">🏦 M-Banking</option>
+              <option value="dompet">👛 Dompet</option>
+              <option value="tabungan">🏧 Tabungan Bank</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-grid three">
+          <div class="form-group" style="grid-column:span 2">
+            <label class="form-label">Keterangan</label>
+            <input type="text" id="inp-desc" placeholder="Contoh: Makan siang di warteg...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tanggal</label>
+            <input type="date" id="inp-date">
+          </div>
+        </div>
+        <div class="form-grid three">
+          <div class="form-group">
+            <label class="form-label">Kategori</label>
+            <select id="inp-cat"></select>
+          </div>
+          <div class="form-group" id="ratio-group">
+            <label class="form-label">Golongan</label>
+            <select id="inp-ratio">
+              <option value="needs">🔵 Kebutuhan</option>
+              <option value="wants">🟡 Keinginan</option>
+              <option value="savings">🟢 Tabungan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jumlah (Rp)</label>
+            <input type="text" id="inp-amount" placeholder="0">
+          </div>
+        </div>
+        <div class="form-group recurring-row" style="margin-bottom:12px">
+          <label class="form-label">Transaksi berulang?</label>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+            <label class="toggle"><input type="checkbox" id="inp-recurring" onchange="toggleRecurringOpts()"><span class="toggle-slider"></span></label>
+            <select id="inp-freq" style="display:none;flex:1">
+              <option value="daily">Setiap hari</option>
+              <option value="weekly">Setiap minggu</option>
+              <option value="monthly" selected>Setiap bulan</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="addTransaction()" style="margin-top: 10px;display:flex;align-items:center;justify-content:center;gap:8px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;font-size:15px;line-height:1">✏️</span> Simpan Transaksi</button>
+        <div class="msg" id="catat-msg"></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Panduan kategori</div>
+        <table style="width:100%;font-size:13px;border-collapse:collapse">
+          <tr><td style="padding:7px 0;color:var(--gray-mid)">🔵 Kebutuhan</td><td style="padding:7px 0;color:var(--text-secondary)">Makan, transportasi, tagihan, sewa, kesehatan</td></tr>
+          <tr><td style="padding:7px 0;color:var(--gray-mid)">🟡 Keinginan</td><td style="padding:7px 0;color:var(--text-secondary)">Hiburan, belanja, makan di luar, langganan</td></tr>
+          <tr><td style="padding:7px 0;color:var(--gray-mid)">🟢 Tabungan</td><td style="padding:7px 0;color:var(--text-secondary)">Investasi, dana darurat, tabungan tujuan</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- BERULANG -->
+    <div id="page-berulang" class="page">
+      <div class="section-title" style="display:flex;align-items:center;gap:8px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;font-size:18px;line-height:1">🔁</span> Transaksi Berulang</div>
+      <div class="card glass" style="margin-bottom:1rem">
+        <div class="card-title">Cara kerja</div>
+        <p style="font-size:12px;color:var(--gray-mid);line-height:1.6">Transaksi berulang otomatis muncul sebagai pengingat setiap periode. Aktifkan di halaman Catat dengan centang "Transaksi berulang?". Kamu bisa eksekusi atau skip tiap periode.</p>
+      </div>
+      <div id="recurring-list"></div>
+    </div>
+
+    <!-- RIWAYAT -->
+    <div id="page-riwayat" class="page">
+      <div class="section-title">Riwayat transaksi</div>
+      <div class="card glass">
+
+        <!-- Search bar utama -->
+        <div class="search-wrap">
+          <span class="search-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;font-size:15px;line-height:1">🔍</span></span>
+          <input type="text" id="search-input" class="search-main" placeholder="Cari keterangan atau kategori..." oninput="renderHistory(); renderFilterChips()">
+          <button class="search-clear" id="search-clear-btn" onclick="clearSearch()" title="Hapus pencarian" style="display:none">✕</button>
+        </div>
+
+        <!-- Filter dropdown row -->
+                <div class="filter-bar" style="margin-top:10px">
+          <select id="fil-month-h" onchange="renderHistory(); renderFilterChips()">
+            <option value="all">Semua bulan</option>
+          </select>
+          <select id="fil-type-h" onchange="renderHistory(); renderFilterChips()">
+            <option value="all">Semua tipe</option>
+            <option value="out">💸 Pengeluaran</option>
+            <option value="in">💵 Pemasukan</option>
+          </select>
+          <select id="fil-cat-h" onchange="renderHistory(); renderFilterChips()">
+            <option value="all">Semua kategori</option>
+          </select>
+          <select id="fil-wallet-h" onchange="renderHistory(); renderFilterChips()">
+            <option value="all">Semua dompet</option>
+            <option value="mbanking">🏦 M-Banking</option>
+            <option value="dompet">👛 Dompet</option>
+            <option value="tabungan">🏧 Tabungan Bank</option>
+          </select>
+        </div>
+
+        <!-- Range tanggal — tambah tepat setelah filter-bar di atas -->
+        <div class="date-range-row">
+          <div class="date-range-label" style="display:flex;align-items:center;gap:5px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">📅</span> Range tanggal</div>
+          <div class="date-range-inputs">
+            <input type="date" id="fil-date-from"
+              onchange="renderHistory(); renderFilterChips()"
+              placeholder="Dari tanggal">
+            <span class="date-range-sep">—</span>
+            <input type="date" id="fil-date-to"
+              onchange="renderHistory(); renderFilterChips()"
+              placeholder="Sampai tanggal">
+            <button class="date-range-quick" onclick="setDateRange('thisMonth')">Bulan ini</button>
+            <button class="date-range-quick" onclick="setDateRange('lastMonth')">Bulan lalu</button>
+            <button class="date-range-quick" onclick="setDateRange('last7')">7 hari</button>
+            <button class="date-range-quick" onclick="setDateRange('last30')">30 hari</button>
+          </div>
+        </div>
+
+        <!-- Active filter chips -->
+        <div id="filter-chips" class="filter-chips" style="display:none"></div>
+
+        <!-- Result summary bar -->
+        <div id="history-total" class="history-summary"></div>
+
+        <div id="history-list"></div>
+      </div>
+    </div>
+
+    <!-- ANALISA -->
+    <div id="page-analisa" class="page">
+      <div class="section-title">Analisa keuangan</div>
+      <div class="card glass">
+        <div class="card-title">Ringkasan per bulan</div>
+        <div style="overflow-x:auto">
+          <table class="trend-table">
+            <thead><tr><th>Bulan</th><th>Pemasukan</th><th>Pengeluaran</th><th>Saldo</th><th>Status</th></tr></thead>
+            <tbody id="monthly-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- GRAFIK PER WALLET (BARU) -->
+      <div class="charts-grid" style="margin-top:1rem">
+        <div class="card glass">
+          <div class="card-title">Saldo per dompet</div>
+          <div class="chart-wrap"><canvas id="chartWalletBalance"></canvas></div>
+        </div>
+        <div class="card glass">
+          <div class="card-title">Tren transaksi per dompet</div>
+          <div class="chart-wrap"><canvas id="chartWalletTrend"></canvas></div>
+        </div>
+      </div>
+      <!-- GRAFIK TREN PER KATEGORI -->
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">📊</span> Tren pengeluaran per kategori</span>
+          <span style="font-size:11px;color:var(--gray-mid);font-weight:400">6 bulan terakhir · top 5 kategori</span>
+        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chartCatTrend"></canvas></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Top pengeluaran terbesar</div>
+        <div id="top-spending"></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Pencapaian rasio 50/30/20</div>
+        <div id="ratio-analisa"></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">📅</span> Hari paling boros dalam seminggu</div>
+        <div id="boros-harian"></div>
+      </div>
+    </div>
+
+    <!-- EKSPOR -->
+    <div id="page-ekspor" class="page">
+      <div class="section-title">Ekspor ke Excel</div>
+      <div class="card glass">
+        <div class="card-title">Filter data ekspor</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Periode</label>
+            <select id="fil-month-e"><option value="all">Semua bulan</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipe transaksi</label>
+            <select id="fil-type-e">
+              <option value="all">Semua tipe</option>
+              <option value="out">Pengeluaran</option>
+              <option value="in">Pemasukan</option>
+            </select>
+          </div>
+        </div>
+        <div id="ekspor-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem"></div>
+      </div>
+      <div class="card glass">
+        <div class="card-title">Pilih sheet</div>
+        <div class="sheet-grid">
+          <div class="sheet-opt selected" id="opt-tx" onclick="toggleSheet('tx',this)">
+            <div class="sheet-icon">📋</div>
+            <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Riwayat transaksi</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Semua data</div></div>
+          </div>
+          <div class="sheet-opt selected" id="opt-summary" onclick="toggleSheet('summary',this)">
+            <div class="sheet-icon">📅</div>
+            <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Ringkasan bulanan</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Per bulan</div></div>
+          </div>
+          <div class="sheet-opt selected" id="opt-cat" onclick="toggleSheet('cat',this)">
+            <div class="sheet-icon">🏷️</div>
+            <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Per kategori</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Breakdown kategori</div></div>
+          </div>
+          <div class="sheet-opt selected" id="opt-ratio" onclick="toggleSheet('ratio',this)">
+            <div class="sheet-icon">⚖️</div>
+            <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Rasio 50/30/20</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Analisa rasio</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="export-progress" style="display:none">
+        <div class="progress-bar"><div class="progress-fill" id="exp-fill" style="width:0%"></div></div>
+      </div>
+      <button class="btn-primary" id="btn-export" onclick="doExport()" style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;font-size:15px;line-height:1">📤</span> Unduh File Excel</button>
+      <div class="msg" id="export-msg"></div>
+
+      <!-- BACKUP & RESTORE JSON -->
+      <div class="card glass" style="margin-top:1.5rem">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">💾</span> Backup & Restore Data</div>
+        <p style="font-size:12px;color:var(--gray-mid);margin-bottom:16px">Simpan semua data ke file JSON dan pulihkan kapan saja. Termasuk transaksi, target, kategori kustom, dan pengaturan.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-primary" onclick="doBackupJSON()" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px">
+            <span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">⬇️</span> Download Backup
+          </button>
+          <button class="btn-outline" onclick="document.getElementById('restore-file-input').click()" style="flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px">
+            <span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">⬆️</span> Restore dari File
+          </button>
+        </div>
+        <input type="file" id="restore-file-input" accept=".json" style="display:none" onchange="doRestoreJSON(event)">
+        <div id="backup-info" style="margin-top:12px;font-size:12px;color:var(--gray-mid)"></div>
+        <div class="msg" id="backup-msg"></div>
+      </div>
+    </div>
+
+    <!-- TABUNGAN BANK -->
+    <div id="page-tabungan" class="page">
+      <div class="section-title" style="display:flex;align-items:center;gap:8px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;font-size:18px;line-height:1">🐷</span> Tabungan Bank</div>
+
+      <!-- Hero Saldo -->
+      <div class="card glass" id="tab-hero-card" style="margin-bottom:1rem;text-align:center;padding:24px 20px;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.06));border-color:rgba(16,185,129,0.25)">
+        <div style="font-size:13px;color:#9CA3AF;margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase;font-weight:600">Saldo Tabungan</div>
+        <div id="tab-hero-saldo" style="font-size:36px;font-weight:900;color:var(--inc);letter-spacing:-0.02em">Rp 0</div>
+        <div id="tab-hero-sub" style="font-size:12px;color:#9CA3AF;margin-top:6px"></div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:18px">
+          <button class="btn-primary" onclick="openTabunganModal()" style="background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4);color:var(--inc);flex:1;max-width:140px;display:flex;align-items:center;justify-content:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;font-size:15px;line-height:1">⚡</span> Setor</button>
+          <button class="btn-outline" onclick="openTabunganTarikModal()" style="flex:1;max-width:140px;display:flex;align-items:center;justify-content:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex-shrink:0;font-size:15px;line-height:1">🐷</span> Tarik</button>
+        </div>
+      </div>
+
+      <!-- Statistik -->
+      <div id="tab-stats-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem"></div>
+
+      <!-- Rencana Nabung Otomatis -->
+      <div class="card glass" style="margin-bottom:1rem">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">🔁</span> Rencana Nabung Otomatis</div>
+        <div id="tab-rencana-list"></div>
+        <button class="btn-outline" style="width:100%;margin-top:10px;justify-content:center;display:flex;align-items:center;gap:6px" onclick="openRencanaNabungModal()"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">✏️</span> Tambah Rencana</button>
+      </div>
+
+      <!-- Grafik Tren -->
+      <div class="card glass" style="margin-bottom:1rem">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">📊</span> Tren Tabungan (6 Bulan)</div>
+        <div style="height:180px;position:relative"><canvas id="chartTabungan"></canvas></div>
+      </div>
+
+      <!-- Histori Transaksi Tabungan -->
+      <div class="card glass">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">📋</span> Histori Tabungan</div>
+        <div id="tab-history-list"></div>
+      </div>
+    </div>
+
+    <!-- TARGET TABUNGAN -->
+    <div id="page-target" class="page">
+      <div class="section-title">🎯 Target Tabungan</div>
+      <div class="card glass">
+        <div class="card-title">Tambah target baru</div>
+        <div class="form-grid three">
+          <div class="form-group" style="grid-column:span 2">
+            <label class="form-label">Nama Target</label>
+            <input type="text" id="tgt-name" placeholder="Contoh: Beli HP baru, Dana darurat...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Deadline</label>
+            <input type="date" id="tgt-date">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Target Dana (Rp)</label>
+            <input type="text" id="tgt-amount" placeholder="Contoh: 5.000.000" oninput="formatInputRupiah(this)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sudah Terkumpul (Rp)</label>
+            <input type="text" id="tgt-saved" placeholder="Contoh: 1.000.000" oninput="formatInputRupiah(this)">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sumber Dana Tabungan</label>
+            <select id="tgt-wallet">
+              <option value="mbanking">🏦 M-Banking</option>
+              <option value="dompet">👛 Dompet</option>
+              <option value="tabungan">🏧 Tabungan Bank</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">Emoji / Ikon</label>
+          <div class="emoji-picker" id="emoji-picker">
+            <span class="emoji-opt selected" onclick="selectEmoji(this,'🏠')">🏠</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'📱')">📱</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'✈️')">✈️</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'🚗')">🚗</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'💻')">💻</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'👶')">👶</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'🎓')">🎓</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'💍')">💍</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'🏖️')">🏖️</span>
+            <span class="emoji-opt" onclick="selectEmoji(this,'⚡')">⚡</span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="addTarget()" style="display:flex;align-items:center;justify-content:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🎯</span> Tambah Target</button>
+        <div class="msg" id="tgt-msg"></div>
+      </div>
+      <div id="target-list" style="margin-top:1rem"></div>
+    </div>
+
+    <!-- KALENDER -->
+    <div id="page-kalender" class="page">
+      <div class="section-title" style="display:flex;align-items:center;gap:8px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0;font-size:18px;line-height:1">📅</span> Kalender Transaksi</div>
+      <div class="card glass">
+        <div id="kalender-wrap"></div>
+      </div>
+    </div>
+
+    <!-- PENGATURAN -->
+    <div id="page-pengaturan" class="page">
+      <div class="section-title">Pengaturan</div>
+      <div class="card glass">
+        <div class="card-title">Target anggaran bulanan</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label">Anggaran pengeluaran (Rp)</label>
+          <input type="text" id="inp-budget" placeholder="Contoh: 5.000.000" oninput="formatInputRupiah(this); saveBudget(this.value.replace(/\./g, ''))">
+        </div>
+        <div id="budget-info" style="font-size:12px;color:var(--gray-mid)"></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Reminder &amp; notifikasi</div>
+        <div class="reminder-row">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Reminder catat harian</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Setiap hari pukul 20:00</div></div>
+          <label class="toggle"><input type="checkbox" id="rem-daily" onchange="saveReminder('daily',this.checked)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="reminder-row">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Laporan mingguan</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Tiap Minggu pagi</div></div>
+          <label class="toggle"><input type="checkbox" id="rem-weekly" onchange="saveReminder('weekly',this.checked)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="reminder-row">
+          <div><div style="font-size:13px;font-weight:600;color:var(--text-primary)">Alert anggaran 80%</div><div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Notifikasi jika melebihi 80%</div></div>
+          <label class="toggle"><input type="checkbox" id="rem-budget" onchange="saveReminder('budget',this.checked)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="msg" id="rem-msg"></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title" style="display:flex;align-items:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;flex-shrink:0;font-size:12px;line-height:1">🏷️</span> Kelola Kategori</div>
+        <p style="font-size:12px;color:var(--gray-mid);margin-bottom:14px">Tambah kategori pengeluaran atau pemasukan kustom. Kategori bawaan tidak bisa dihapus.</p>
+
+        <div class="form-grid" style="margin-bottom:10px">
+          <div class="form-group">
+            <label class="form-label">Tipe kategori</label>
+            <select id="cat-type-new">
+              <option value="out">💸 Pengeluaran</option>
+              <option value="in">💵 Pemasukan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Emoji</label>
+            <input type="text" id="cat-emoji-new" placeholder="📦" maxlength="2" style="font-size:20px;text-align:center">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label class="form-label">Nama kategori</label>
+          <input type="text" id="cat-name-new" placeholder="Contoh: Olahraga, Buku, Kos..." maxlength="24"
+            onkeydown="if(event.key==='Enter') addCustomCategory()">
+        </div>
+        <button class="btn-primary" onclick="addCustomCategory()" style="margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">✏️</span> Tambah Kategori</button>
+        <div class="msg" id="cat-msg"></div>
+
+        <div id="cat-list-out" style="margin-top:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">💸 Pengeluaran</div>
+          <div id="cat-chips-out" class="cat-chip-grid"></div>
+        </div>
+        <div id="cat-list-in" style="margin-top:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-mid);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">💵 Pemasukan</div>
+          <div id="cat-chips-in" class="cat-chip-grid"></div>
+        </div>
+      </div>
+
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Profil</div>
+        <!-- Avatar picker -->
+        <!-- Hidden file input for photo upload -->
+        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+          <div class="profile-avatar-big" id="profile-avatar-big" onclick="toggleAvatarPicker()">
+            <span id="profile-avatar-display">👤</span>
+            <div class="profile-avatar-edit">✏️</div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-primary)" id="profile-name-display">Pengguna</div>
+            <div style="font-size:11px;color:var(--gray-mid);margin-top:2px">Ketuk avatar untuk ganti</div>
+            <button class="btn-outline" style="margin-top:8px;font-size:11px;padding:5px 12px;display:flex;align-items:center;gap:6px" onclick="document.getElementById('avatar-file-input').click()">
+              <span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;flex-shrink:0;font-size:11px;line-height:1">📷</span> Upload Foto
+            </button>
+          </div>
+        </div>
+        <div class="avatar-picker-grid" id="avatar-picker-grid" style="display:none">
+          <span class="avatar-opt" onclick="selectAvatar('👤')">👤</span>
+          <span class="avatar-opt" onclick="selectAvatar('😎')">😎</span>
+          <span class="avatar-opt" onclick="selectAvatar('🧑')">🧑</span>
+          <span class="avatar-opt" onclick="selectAvatar('👩')">👩</span>
+          <span class="avatar-opt" onclick="selectAvatar('👨')">👨</span>
+          <span class="avatar-opt" onclick="selectAvatar('🧒')">🧒</span>
+          <span class="avatar-opt" onclick="selectAvatar('👴')">👴</span>
+          <span class="avatar-opt" onclick="selectAvatar('👵')">👵</span>
+          <span class="avatar-opt" onclick="selectAvatar('🦸')">🦸</span>
+          <span class="avatar-opt" onclick="selectAvatar('🧙')">🧙</span>
+          <span class="avatar-opt" onclick="selectAvatar('🐱')">🐱</span>
+          <span class="avatar-opt" onclick="selectAvatar('🐶')">🐶</span>
+          <span class="avatar-opt" onclick="selectAvatar('🦊')">🦊</span>
+          <span class="avatar-opt" onclick="selectAvatar('🐼')">🐼</span>
+          <span class="avatar-opt" onclick="selectAvatar('🐨')">🐨</span>
+          <span class="avatar-opt" onclick="selectAvatar('🦁')">🦁</span>
+          <span class="avatar-opt" onclick="selectAvatar('🌟')">🌟</span>
+          <span class="avatar-opt" onclick="selectAvatar('🔥')">🔥</span>
+          <span class="avatar-opt" onclick="selectAvatar('💎')">💎</span>
+          <span class="avatar-opt" onclick="selectAvatar('🚀')">🚀</span>
+        </div>
+        <div id="remove-photo-row" style="display:none;margin-top:6px">
+          <button class="btn-outline" style="font-size:11px;padding:5px 12px;color:var(--red);border-color:rgba(239,68,68,0.3);display:flex;align-items:center;gap:6px" onclick="removeAvatarPhoto()">
+            <span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;flex-shrink:0;font-size:11px;line-height:1">🗑️</span> Hapus foto
+          </button>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;margin-top:8px">
+          <label class="form-label">Nama akun</label>
+          <input type="text" id="inp-name" placeholder="Nama kamu" oninput="saveName(this.value)">
+        </div>
+      </div>
+      <div class="card glass" style="margin-top:1rem">
+        <div class="card-title">Ubah PIN</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">PIN baru (4 digit)</label>
+            <input type="password" id="inp-pin-new" maxlength="4" inputmode="numeric" placeholder="••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Konfirmasi PIN</label>
+            <input type="password" id="inp-pin-confirm" maxlength="4" inputmode="numeric" placeholder="••••">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="savePin()" style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🔒</span> Simpan PIN</button>
+        <div class="msg" id="pin-msg"></div>
+      </div>
+      <div class="card glass" style="margin-top:1rem;border-color:rgba(255,90,95,0.2)">
+        <div class="card-title" style="color:var(--red)">Zona bahaya</div>
+        <p style="font-size:12px;color:var(--gray-mid);margin-bottom:12px">Hapus semua data transaksi. Tidak bisa dibatalkan.</p>
+        <button class="btn-outline" style="color:var(--red);border-color:rgba(255,90,95,0.3);display:flex;align-items:center;gap:6px" onclick="confirmReset()"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🗑️</span> Hapus semua data</button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app-shell -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bnav-btn active" onclick="showPage('dashboard',this);syncBottomNav('dashboard')" data-page="dashboard">
+    <span class="bnav-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">🏠</span></span>
+    <span class="bnav-label">Dashboard</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('catat',this);syncBottomNav('catat')" data-page="catat">
+    <span class="bnav-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">✏️</span></span>
+    <span class="bnav-label">Catat</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('riwayat',this);syncBottomNav('riwayat')" data-page="riwayat">
+    <span class="bnav-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">📋</span></span>
+    <span class="bnav-label">Riwayat</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('analisa',this);syncBottomNav('analisa')" data-page="analisa">
+    <span class="bnav-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">📊</span></span>
+    <span class="bnav-label">Analisa</span>
+  </button>
+  <button class="bnav-btn" onclick="openMoreMenu()" id="bnav-more">
+    <span class="bnav-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">•••</span></span>
+    <span class="bnav-label">Lainnya</span>
+  </button>
+  <button class="bnav-btn" onclick="showPage('kalender',this);syncBottomNav('kalender')" data-page="kalender">
+    <span class="bnav-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">📅</span></span>
+    <span class="bnav-label">Kalender</span>
+  </button>
+</nav>
+
+<!-- MORE MENU SHEET (mobile) -->
+<div id="more-menu-sheet" style="display:none">
+  <div class="more-menu-backdrop" onclick="closeMoreMenu()"></div>
+  <div class="more-menu-panel">
+    <div class="more-menu-handle"></div>
+    <div class="more-menu-grid">
+      <button class="more-menu-item" onclick="closeMoreMenu();showPage('berulang',null);syncTopNav('berulang')">
+        <span class="more-menu-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">🔁</span></span><span>Berulang</span>
+        <span class="more-badge" id="more-recurring-badge" style="display:none"></span>
+      </button>
+      <button class="more-menu-item" onclick="closeMoreMenu();showPage('ekspor',null);syncTopNav('ekspor')">
+        <span class="more-menu-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">📤</span></span><span>Ekspor</span>
+      </button>
+      <button class="more-menu-item" onclick="closeMoreMenu();showPage('tabungan',null);syncTopNav('tabungan')">
+        <span class="more-menu-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">🐷</span></span><span>Tabungan</span>
+      </button>
+      <button class="more-menu-item" onclick="closeMoreMenu();showPage('target',null);syncTopNav('target')">
+        <span class="more-menu-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">🎯</span></span><span>Target</span>
+      </button>
+      <button class="more-menu-item" onclick="closeMoreMenu();showPage('pengaturan',null);syncTopNav('pengaturan')">
+        <span class="more-menu-icon"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;font-size:20px;line-height:1">⚙️</span></span><span>Pengaturan</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal" class="modal-overlay" style="display:none" onclick="closeEditModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">✏️ Edit Transaksi</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tipe</label>
+        <select id="edit-type" onchange="updateEditCatOptions()">
+          <option value="out">💸 Pengeluaran</option>
+          <option value="in">💵 Pemasukan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sumber / Simpan Di</label>
+        <select id="edit-wallet">
+          <option value="mbanking">🏦 M-Banking</option>
+          <option value="dompet">👛 Dompet</option>
+          <option value="tabungan">🏧 Tabungan Bank</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="form-label">Keterangan</label>
+      <input type="text" id="edit-desc" placeholder="Keterangan transaksi">
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <select id="edit-cat"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal</label>
+        <input type="date" id="edit-date">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Jumlah (Rp)</label>
+        <input type="text" id="edit-amount" placeholder="0" oninput="formatInputRupiah(this)">
+      </div>
+      <div class="form-group" id="edit-ratio-group">
+        <label class="form-label">Golongan</label>
+        <select id="edit-ratio">
+          <option value="needs">🔵 Kebutuhan</option>
+          <option value="wants">🟡 Keinginan</option>
+          <option value="savings">🟢 Tabungan</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn-outline" style="flex:1" onclick="closeEditModal()">Batal</button>
+      <button class="btn-primary" style="flex:2" onclick="saveEdit()">💾 Simpan Perubahan</button>
+    </div>
+    <div class="msg" id="edit-msg"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;width:calc(100% - 32px);max-width:420px"></div>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(45,42,38,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div id="confirm-box" style="background:var(--bg-raised);border:1px solid var(--border-mid);border-radius:20px;padding:28px 24px;width:calc(100% - 48px);max-width:360px;box-shadow:0 20px 60px rgba(45,42,38,0.2)">
+    <div id="confirm-icon" style="font-size:32px;text-align:center;margin-bottom:12px"></div>
+    <div id="confirm-title" style="font-size:15px;font-weight:700;color:var(--text-primary);text-align:center;margin-bottom:8px"></div>
+    <div id="confirm-msg" style="font-size:13px;color:var(--text-secondary);text-align:center;line-height:1.6;margin-bottom:20px;white-space:pre-line"></div>
+    <div style="display:flex;gap:10px">
+      <button id="confirm-cancel" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-mid);background:var(--surface);color:var(--text-primary);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+      <button id="confirm-ok" style="flex:2;padding:12px;border-radius:12px;border:none;font-size:13px;font-weight:700;cursor:pointer">Ya, lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM PROMPT MODAL -->
+<div id="prompt-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(45,42,38,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--bg-raised);border:1px solid var(--border-mid);border-radius:20px;padding:28px 24px;width:calc(100% - 48px);max-width:360px;box-shadow:0 20px 60px rgba(45,42,38,0.2)">
+    <div id="prompt-title" style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:14px"></div>
+    <input id="prompt-input" type="text" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--border-mid);background:var(--bg);color:var(--text-primary);font-size:14px;margin-bottom:16px;box-sizing:border-box" />
+    <div style="display:flex;gap:10px">
+      <button id="prompt-cancel" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-mid);background:var(--surface);color:var(--text-primary);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+      <button id="prompt-ok" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--accent);color:var(--accent-text);font-size:13px;font-weight:700;cursor:pointer">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TARGET MODAL -->
+<div id="edit-target-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(45,42,38,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="closeEditTargetModal(event)">
+  <div style="background:var(--bg-raised);border:1px solid var(--border-mid);border-radius:20px;padding:26px 22px;width:calc(100% - 40px);max-width:400px;box-shadow:0 20px 60px rgba(45,42,38,0.2)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div style="font-size:16px;font-weight:800;color:var(--text-primary)">✏️ Edit Target</div>
+      <button onclick="document.getElementById('edit-target-overlay').style.display='none'" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);width:30px;height:30px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <input type="hidden" id="et-id">
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="form-label">Nama Target</label>
+      <input type="text" id="et-name" placeholder="Contoh: Beli HP baru...">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">Target Dana (Rp)</label>
+        <input type="text" id="et-amount" placeholder="5.000.000" oninput="formatInputRupiah(this)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sudah Terkumpul (Rp)</label>
+        <input type="text" id="et-saved" placeholder="1.000.000" oninput="formatInputRupiah(this)">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:12px">
+      <label class="form-label">Deadline</label>
+      <input type="date" id="et-date">
+    </div>
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="form-label">Emoji — dipilih: <span id="et-emoji-selected">🏠</span></label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">🏠</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">📱</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">✈️</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">🚗</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">💻</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">👶</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">🎓</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">💍</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">🏖️</span>
+        <span class="et-emoji-opt emoji-opt" onclick="etSelectEmoji(this)">⚡</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="document.getElementById('edit-target-overlay').style.display='none'" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-mid);background:var(--surface);color:var(--text-primary);font-size:13px;font-weight:600;cursor:pointer">Batal</button>
+      <button onclick="saveEditTarget()" style="flex:2;padding:12px;border-radius:12px;border:none;background:var(--accent);color:var(--accent-text);font-size:13px;font-weight:700;cursor:pointer">💾 Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- KEYBOARD SHORTCUT HELP OVERLAY -->
+<div id="shortcut-help-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(45,42,38,0.65);backdrop-filter:blur(4px);align-items:center;justify-content:center" onclick="if(event.target===this)closeShortcutHelp()">
+  <div class="shortcut-help-panel">
+    <div class="shortcut-help-header">
+      <div class="shortcut-help-title">⌨️ Keyboard Shortcuts</div>
+      <button onclick="closeShortcutHelp()" class="shortcut-help-close">✕</button>
+    </div>
+    <div class="shortcut-help-body">
+      <div class="shortcut-section-label">Navigasi</div>
+      <div class="shortcut-row"><kbd>1</kbd>–<kbd>9</kbd><span>Pindah ke tab (Dashboard, Catat, ...)</span></div>
+      <div class="shortcut-row"><kbd>N</kbd><span>Ke halaman Catat &amp; fokus form</span></div>
+      <div class="shortcut-section-label" style="margin-top:12px">Pencarian</div>
+      <div class="shortcut-row"><kbd>/</kbd><span>Buka Global Search</span></div>
+      <div class="shortcut-section-label" style="margin-top:12px">Umum</div>
+      <div class="shortcut-row"><kbd>?</kbd><span>Buka/tutup halaman ini</span></div>
+      <div class="shortcut-row"><kbd>Esc</kbd><span>Tutup modal / search yang terbuka</span></div>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:var(--text-secondary);text-align:center">Tekan <kbd>Esc</kbd> atau klik di luar untuk menutup</div>
+  </div>
+</div>
+
+<script src="js/script.js" defer></script>
+<script src="js/receipt.js" defer></script>
+<script src="js/update.js" defer></script>
+</body>
+</html>
