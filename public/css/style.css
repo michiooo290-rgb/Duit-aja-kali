@@ -1,4 +1,11 @@
 /* ===================== ANIMATION KEYFRAMES ===================== */
+
+/* ===================== PAGE SWITCHING (core nav behavior) ===================== */
+.page { display: none; }
+.page.active { display: block; }
+.page.slide-in-right { animation: fadeInRight 0.35s ease; }
+.page.slide-in-left { animation: fadeInLeft 0.35s ease; }
+
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
