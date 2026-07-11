@@ -1,5 +1,5 @@
 # 🚀 Deployment Guide — Duit Tracker Pro
-## Stack: Node.js + PostgreSQL (Supabase) + Railway
+## Stack: Node.js + PostgreSQL (Supabase) + Railway / Vercel
 
 ---
 
@@ -153,6 +153,42 @@ Open your Railway URL in browser → you should see the Duit Tracker Pro login p
 Login with PIN: **1234**
 
 Try adding a transaction → refresh page → data should persist ✅
+
+---
+
+## STEP 4b — Deploy to Vercel (Alternative to Railway)
+
+Vercel runs this app as a **serverless function** (`api/index.js`), not a long-running
+process, so no separate "start command" is needed.
+
+1. Go to https://vercel.com → **Login with GitHub**
+2. Click **Add New… → Project** → import repo `Duit-aja-kali`
+3. Vercel auto-detects the `api/` folder and `vercel.json` — no build config needed
+
+### Set Environment Variables on Vercel:
+1. In the project → **Settings → Environment Variables**
+2. Add:
+
+| Key | Value |
+|-----|-------|
+| `DATABASE_URL` | Supabase **pooled** connection string (port `6543`, pgbouncer mode — see note below) |
+| `JWT_SECRET` | (your long random string) |
+| `DEFAULT_PIN` | `1234` |
+
+> ⚠️ **Use the pooled connection string on Vercel**, not the direct one (port 5432).
+> Serverless functions can spin up many concurrent instances; without a pooler
+> (Supabase → Settings → Database → Connection Pooling → port 6543) you can
+> quickly exhaust Postgres's connection limit.
+
+4. Deploy. Vercel gives you a URL like `https://duit-aja-kali.vercel.app`
+
+### How it works here:
+- `api/index.js` builds and exports the Express `app` (no `app.listen`) — this is
+  the actual serverless function Vercel runs.
+- `vercel.json` rewrites every request to that function; the app itself serves
+  static files from `public/` and falls back to `index.html` for the SPA.
+- `server.js` is only used for **local development** (`npm start`) — it imports
+  the same `app` and calls `app.listen()`.
 
 ---
 
