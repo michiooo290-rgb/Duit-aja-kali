@@ -482,7 +482,7 @@ button[onclick="saveEditTarget()"] {
   flex-direction: column;
   opacity: 0;
   transform: translateX(100%);
-  padding: 6em 2em 2em 2em !important;
+  padding: 2em 2em 2em 2em !important;
   overflow-y: auto !important;
   pointer-events: auto !important;
 }
