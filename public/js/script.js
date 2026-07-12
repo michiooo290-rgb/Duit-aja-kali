@@ -1293,8 +1293,16 @@ function openStaggeredMenu() {
 
   // Build timeline
   var tl = gsap.timeline({
-    onComplete: function() { _smBusy = false; }
+    onComplete: function() { _smBusy = false; },
+    onKill: function() { _smBusy = false; }
   });
+
+  // Safety timeout - reset _smBusy if animation takes too long (3 seconds)
+  setTimeout(function() {
+    if (_smBusy) {
+      _smBusy = false;
+    }
+  }, 3000);
 
   // Stagger prelayers
   layers.forEach(function(layer, i) {
@@ -1368,6 +1376,7 @@ function closeStaggeredMenu() {
   var allPanels = layers.concat([panel]);
 
   if (_smCloseTween) _smCloseTween.kill();
+  _smBusy = true;
   _smCloseTween = gsap.to(allPanels, {
     x: '100%', duration: 0.32, ease: 'power3.in',
     overwrite: 'auto',
@@ -1376,6 +1385,10 @@ function closeStaggeredMenu() {
       if (itemLabels.length) gsap.set(itemLabels, { y: 50, rotation: 10, opacity: 0 });
       if (backdrop) backdrop.classList.remove('open');
       document.body.style.overflow = '';
+      _smBusy = false;
+    },
+    onKill: function() {
+      _smBusy = false;
     }
   });
 

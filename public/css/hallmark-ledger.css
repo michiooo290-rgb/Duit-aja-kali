@@ -507,7 +507,8 @@ button[onclick="saveEditTarget()"] {
 .sm-panel-sub { font-size: 11px !important; color: var(--color-muted) !important; margin-top: 2px !important; }
 
 .sm-panel-list { list-style: none !important; margin: 0 !important; padding: 0 !important; display: flex !important; flex-direction: column !important; gap: 2px !important; }
-.sm-panel-itemWrap { position: relative !important; overflow: hidden !important; }
+.sm-panel-itemWrap { position: relative !important; overflow: visible !important; }
+.sm-panel-itemLabel { display: inline-block !important; }
 .sm-panel-item {
   position: relative !important;
   display: flex !important; align-items: baseline !important; gap: 10px !important;
