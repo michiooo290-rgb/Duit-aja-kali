@@ -542,14 +542,21 @@ button[onclick="saveEditTarget()"] {
   overflow-x: clip !important;
 }
 
-.nav-btn > .em-icon,
-.bnav-icon,
-.more-menu-icon,
 .section-title .em-icon,
 .card-title .em-icon,
 .global-search-trigger .em-icon,
-.theme-toggle .em-icon {
-  display: none !important;
+.theme-toggle .em-icon,
+.bnav-icon .em-icon,
+.more-menu-icon .em-icon,
+.nav-btn > .em-icon {
+  display: inline-flex !important;
+  filter: grayscale(0.6) !important;
+  opacity: 0.88 !important;
+}
+
+.global-search-trigger,
+.theme-toggle {
+  gap: 6px !important;
 }
 
 .page.active {
@@ -650,10 +657,9 @@ button[onclick="saveEditTarget()"] {
 .tx-icon,
 .sheet-icon,
 .target-emoji,
-.gsi-icon,
-.empty-anim {
-  color: transparent !important;
-  font-size: 0 !important;
+.gsi-icon {
+  font-size: 16px !important;
+  line-height: 1 !important;
   width: 34px !important;
   height: 34px !important;
   min-width: 34px !important;
@@ -664,34 +670,36 @@ button[onclick="saveEditTarget()"] {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  filter: grayscale(0.55) !important;
+  opacity: 0.9 !important;
 }
 
-.metric-icon::after,
-.tx-icon::after,
-.sheet-icon::after,
-.target-emoji::after,
-.gsi-icon::after,
-.empty-anim::after {
-  content: '' !important;
-  width: 9px !important;
-  height: 9px !important;
-  display: block !important;
+.empty-anim {
+  font-size: 26px !important;
+  line-height: 1 !important;
+  width: 64px !important;
+  height: 64px !important;
+  min-width: 64px !important;
   border-radius: 50% !important;
-  background: var(--color-accent) !important;
+  border: var(--rule-hairline) !important;
+  background: var(--color-paper-2) !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  filter: grayscale(0.55) !important;
+  opacity: 0.85 !important;
+  margin: 0 auto 16px !important;
 }
 
-.metric-icon > *,
-.tx-icon > *,
-.sheet-icon > *,
-.target-emoji > *,
-.gsi-icon > *,
-.empty-anim > * {
-  display: none !important;
+.empty-anim span {
+  font-size: inherit !important;
 }
 
 .metric:first-child .metric-icon {
   width: 46px !important;
   height: 46px !important;
+  font-size: 20px !important;
 }
 
 .metric-label {
