@@ -191,14 +191,23 @@
 
 /* ── Responsive ── */
 
-/* Below 860px the centered brand could collide with actions:
+/* Keep the hamburger visible at every width (base CSS hides it <980px) */
+@media (max-width: 980px) {
+  .sm-toggle { display: flex !important; }
+}
+
+/* Below 1100px the centered brand could collide with actions:
    dock it next to the hamburger instead */
-@media (max-width: 859px) {
+@media (max-width: 1099px) {
   .topbar-brand {
     position: static !important;
     transform: none !important;
-    margin-left: 4px !important;
+    margin-left: 8px !important;
+    pointer-events: auto !important;
   }
+  .topbar-left { flex: 0 0 auto !important; }
+  .topbar { justify-content: flex-start !important; }
+  .topbar-actions { margin-left: auto !important; }
   .topbar-title { font-size: 0.95rem !important; }
 }
 
