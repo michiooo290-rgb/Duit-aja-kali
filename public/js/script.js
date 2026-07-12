@@ -251,7 +251,7 @@ function updateDate() {
 
 function updateRecurringBadge() {
   const due = getDueRecurringCount();
-  const pill = document.querySelector('.pill-item[data-page="berulang"] .pill-label');
+  const pill = document.querySelector('.sm-panel-item[data-page="berulang"] .sm-panel-itemLabel');
   if (pill) {
     pill.innerHTML = due > 0 ? `Berulang <span class="nav-badge">${due}</span>` : 'Berulang';
   }
@@ -279,7 +279,7 @@ function showPage(id, btn) {
   inEl.classList.add('active', goRight ? 'slide-in-right' : 'slide-in-left');
   setTimeout(() => inEl.classList.remove('slide-in-right', 'slide-in-left'), 350);
 
-  document.querySelectorAll('.nav-btn, .pill-item').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .pill-item, .sm-panel-item').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 
   _currentPage = id;
@@ -587,7 +587,7 @@ function duplicateTx(id) {
   if (!t) return;
 
   // Pindah ke halaman Catat
-  const catBtn = document.querySelector('.pill-item[data-page="catat"]');
+  const catBtn = document.querySelector('.sm-panel-item[data-page="catat"]');
   showPage('catat', catBtn);
   syncBottomNav && syncBottomNav('catat');
 
@@ -1213,25 +1213,65 @@ function syncBottomNav(pageId) {
 }
 
 function syncTopNav(pageId) {
-  document.querySelectorAll('.pill-item').forEach(b => {
+  document.querySelectorAll('.sm-panel-item').forEach(b => {
     b.classList.toggle('active', b.dataset.page === pageId);
   });
 }
 
-/* ===== PILL NAV (desktop top bar, GSAP hover-circle) ===== */
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.pill-nav-wrap .pill-item').forEach(pill => {
-    const circle = pill.querySelector('.pill-hover-circle');
-    if (!circle || !window.gsap) return;
-    gsap.set(circle, { yPercent: 100 });
-    pill.addEventListener('mouseenter', () => {
-      gsap.to(circle, { yPercent: 0, duration: 0.35, ease: 'power3.out', overwrite: 'auto' });
+/* ===== STAGGERED MENU (desktop hamburger, GSAP staggered slide-in) ===== */
+let _smOpen = false;
+function toggleStaggeredMenu() {
+  _smOpen ? closeStaggeredMenu() : openStaggeredMenu();
+}
+function openStaggeredMenu() {
+  const panel = document.getElementById('sm-panel');
+  const backdrop = document.getElementById('sm-backdrop');
+  const toggle = document.getElementById('sm-toggle');
+  if (!panel || !backdrop) return;
+  _smOpen = true;
+  toggle?.classList.add('is-open');
+  toggle?.setAttribute('aria-expanded', 'true');
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const items = panel.querySelectorAll('.sm-panel-item');
+  if (window.gsap) {
+    gsap.set(backdrop, { opacity: 0 });
+    gsap.set(panel, { xPercent: 100 });
+    gsap.set(items, { yPercent: 60, rotate: 4, opacity: 0 });
+    gsap.to(backdrop, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+    gsap.to(panel, { xPercent: 0, duration: 0.45, ease: 'power4.out' });
+    gsap.to(items, {
+      yPercent: 0, rotate: 0, opacity: 1, duration: 0.55, ease: 'power4.out',
+      stagger: { each: 0.06, from: 'start' }, delay: 0.12
     });
-    pill.addEventListener('mouseleave', () => {
-      gsap.to(circle, { yPercent: 100, duration: 0.25, ease: 'power3.in', overwrite: 'auto' });
+  } else {
+    panel.style.transform = 'translateX(0)';
+    backdrop.style.opacity = '1';
+  }
+}
+function closeStaggeredMenu() {
+  const panel = document.getElementById('sm-panel');
+  const backdrop = document.getElementById('sm-backdrop');
+  const toggle = document.getElementById('sm-toggle');
+  if (!panel || !backdrop || !_smOpen) return;
+  _smOpen = false;
+  toggle?.classList.remove('is-open');
+  toggle?.setAttribute('aria-expanded', 'false');
+
+  if (window.gsap) {
+    gsap.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+    gsap.to(panel, {
+      xPercent: 100, duration: 0.32, ease: 'power3.in',
+      onComplete: () => { backdrop.classList.remove('open'); document.body.style.overflow = ''; }
     });
-  });
-});
+  } else {
+    panel.style.transform = 'translateX(100%)';
+    backdrop.style.opacity = '0';
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
 
 function openMoreMenu() {
   const sheet = document.getElementById('more-menu-sheet');
@@ -1726,7 +1766,7 @@ function renderGlobalSearch() {
 function gsearchJump(id) {
   closeGlobalSearch();
   // buka riwayat dan highlight transaksi
-  const navBtn = document.querySelector('.pill-item[data-page="riwayat"]');
+  const navBtn = document.querySelector('.sm-panel-item[data-page="riwayat"]');
   showPage('riwayat', navBtn);
   setTimeout(() => {
     const inp = document.getElementById('search-input');
@@ -1742,7 +1782,7 @@ function gsearchJump(id) {
 
 function gsearchShowAll(q) {
   closeGlobalSearch();
-  const navBtn = document.querySelector('.pill-item[data-page="riwayat"]');
+  const navBtn = document.querySelector('.sm-panel-item[data-page="riwayat"]');
   showPage('riwayat', navBtn);
   setTimeout(() => {
     const inp = document.getElementById('search-input');
@@ -2479,7 +2519,7 @@ document.addEventListener('keydown', function(e) {
   // N — ke halaman Catat
   if ((e.key === 'n' || e.key === 'N') && !e.ctrlKey && !e.metaKey) {
     e.preventDefault();
-    const btn = document.querySelector('.pill-item[data-page="catat"]');
+    const btn = document.querySelector('.sm-panel-item[data-page="catat"]');
     showPage('catat', btn);
     syncBottomNav && syncBottomNav('catat');
     setTimeout(() => document.getElementById('inp-desc')?.focus(), 200);
@@ -2491,7 +2531,7 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
     const pageId = navMap[e.key];
     const idx    = PAGE_ORDER.indexOf(pageId) + 1;
-    const btn    = document.querySelector(`.pill-item[data-page="${pageId}"]`);
+    const btn    = document.querySelector(`.sm-panel-item[data-page="${pageId}"]`);
     showPage(pageId, btn);
     syncBottomNav && syncBottomNav(pageId);
     return;
