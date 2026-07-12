@@ -1218,59 +1218,181 @@ function syncTopNav(pageId) {
   });
 }
 
-/* ===== STAGGERED MENU (desktop hamburger, GSAP staggered slide-in) ===== */
-let _smOpen = false;
+/* ===== STAGGERED MENU (React Bits style, GSAP timeline) ===== */
+var _smOpen = false;
+var _smBusy = false;
+var _smOpenTl = null;
+var _smCloseTween = null;
+var _smSpinTween = null;
+var _smTextCycleAnim = null;
+
 function toggleStaggeredMenu() {
+  if (_smBusy) return;
   _smOpen ? closeStaggeredMenu() : openStaggeredMenu();
 }
+
 function openStaggeredMenu() {
-  const panel = document.getElementById('sm-panel');
-  const backdrop = document.getElementById('sm-backdrop');
-  const toggle = document.getElementById('sm-toggle');
-  if (!panel || !backdrop) return;
+  var panel = document.getElementById('sm-panel');
+  var backdrop = document.getElementById('sm-backdrop');
+  var prelayers = document.getElementById('sm-prelayers');
+  var toggle = document.getElementById('sm-toggle');
+  if (!panel || !prelayers) return;
+
+  _smBusy = true;
   _smOpen = true;
-  toggle?.classList.add('is-open');
-  toggle?.setAttribute('aria-expanded', 'true');
-  backdrop.classList.add('open');
+  if (toggle) toggle.setAttribute('aria-expanded', 'true');
+  if (backdrop) backdrop.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  const items = panel.querySelectorAll('.sm-panel-item');
-  if (window.gsap) {
-    gsap.set(backdrop, { opacity: 0 });
-    gsap.set(panel, { xPercent: 100 });
-    gsap.set(items, { yPercent: 60, rotate: 4, opacity: 0 });
-    gsap.to(backdrop, { opacity: 1, duration: 0.25, ease: 'power2.out' });
-    gsap.to(panel, { xPercent: 0, duration: 0.45, ease: 'power4.out' });
-    gsap.to(items, {
-      yPercent: 0, rotate: 0, opacity: 1, duration: 0.55, ease: 'power4.out',
-      stagger: { each: 0.06, from: 'start' }, delay: 0.12
-    });
-  } else {
-    panel.style.transform = 'translateX(0)';
-    backdrop.style.opacity = '1';
+  // Animate icon rotation (hamburger -> X, 225deg)
+  if (_smSpinTween) _smSpinTween.kill();
+  var icon = toggle ? toggle.querySelector('.sm-icon') : null;
+  if (icon && window.gsap) {
+    _smSpinTween = gsap.to(icon, { rotate: 225, duration: 0.8, ease: 'power4.out', overwrite: 'auto' });
   }
-}
-function closeStaggeredMenu() {
-  const panel = document.getElementById('sm-panel');
-  const backdrop = document.getElementById('sm-backdrop');
-  const toggle = document.getElementById('sm-toggle');
-  if (!panel || !backdrop || !_smOpen) return;
-  _smOpen = false;
-  toggle?.classList.remove('is-open');
-  toggle?.setAttribute('aria-expanded', 'false');
 
-  if (window.gsap) {
-    gsap.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.in' });
-    gsap.to(panel, {
-      xPercent: 100, duration: 0.32, ease: 'power3.in',
-      onComplete: () => { backdrop.classList.remove('open'); document.body.style.overflow = ''; }
-    });
-  } else {
-    panel.style.transform = 'translateX(100%)';
-    backdrop.style.opacity = '0';
-    backdrop.classList.remove('open');
-    document.body.style.overflow = '';
+  // Animate text "Menu" -> "Close"
+  _animateSmText(true);
+
+  if (!window.gsap) {
+    panel.style.transform = 'translateX(0)';
+    panel.style.opacity = '1';
+    if (backdrop) backdrop.style.opacity = '1';
+    prelayers.style.opacity = '1';
+    _smBusy = false;
+    return;
   }
+
+  // Kill any running tweens
+  if (_smCloseTween) _smCloseTween.kill();
+  if (_smOpenTl) _smOpenTl.kill();
+
+  var layers = Array.from(prelayers.querySelectorAll('.sm-prelayer'));
+  var itemLabels = Array.from(panel.querySelectorAll('.sm-panel-itemLabel'));
+
+  // Set initial states
+  gsap.set(backdrop, { opacity: 0 });
+  gsap.set(prelayers, { opacity: 1 });
+  var allPanels = [panel].concat(layers);
+  gsap.set(allPanels, { xPercent: 100, opacity: 1 });
+  if (itemLabels.length) {
+    gsap.set(itemLabels, { yPercent: 140, rotate: 10, opacity: 0 });
+  }
+
+  // Build timeline
+  var tl = gsap.timeline({
+    onComplete: function() { _smBusy = false; }
+  });
+
+  // Stagger prelayers
+  layers.forEach(function(layer, i) {
+    tl.to(layer, { xPercent: 0, duration: 0.5, ease: 'power4.out' }, i * 0.07);
+  });
+
+  // Panel slides in after prelayers
+  var panelInsertTime = layers.length ? (layers.length - 1) * 0.07 + 0.08 : 0;
+  tl.to(panel, { xPercent: 0, duration: 0.65, ease: 'power4.out' }, panelInsertTime);
+
+  // Backdrop fades in
+  tl.to(backdrop, { opacity: 1, duration: 0.3, ease: 'power2.out' }, panelInsertTime);
+
+  // Items stagger in
+  if (itemLabels.length) {
+    var itemsStart = panelInsertTime + 0.65 * 0.15;
+    tl.to(itemLabels, {
+      yPercent: 0, rotate: 0, opacity: 1,
+      duration: 1, ease: 'power4.out',
+      stagger: { each: 0.1, from: 'start' }
+    }, itemsStart);
+  }
+
+  _smOpenTl = tl;
+}
+
+function closeStaggeredMenu() {
+  var panel = document.getElementById('sm-panel');
+  var backdrop = document.getElementById('sm-backdrop');
+  var prelayers = document.getElementById('sm-prelayers');
+  var toggle = document.getElementById('sm-toggle');
+  if (!panel || !prelayers || !_smOpen) return;
+
+  _smOpen = false;
+  if (toggle) toggle.setAttribute('aria-expanded', 'false');
+
+  // Animate icon rotation back to 0
+  if (_smSpinTween) _smSpinTween.kill();
+  var icon = toggle ? toggle.querySelector('.sm-icon') : null;
+  if (icon && window.gsap) {
+    _smSpinTween = gsap.to(icon, { rotate: 0, duration: 0.35, ease: 'power3.inOut', overwrite: 'auto' });
+  }
+
+  // Animate text "Close" -> "Menu"
+  _animateSmText(false);
+
+  if (!window.gsap) {
+    panel.style.transform = 'translateX(100%)';
+    panel.style.opacity = '0';
+    if (backdrop) backdrop.style.opacity = '0';
+    prelayers.style.opacity = '0';
+    if (backdrop) backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    return;
+  }
+
+  if (_smOpenTl) _smOpenTl.kill();
+
+  var layers = Array.from(prelayers.querySelectorAll('.sm-prelayer'));
+  var allPanels = layers.concat([panel]);
+
+  if (_smCloseTween) _smCloseTween.kill();
+  _smCloseTween = gsap.to(allPanels, {
+    xPercent: 100, duration: 0.32, ease: 'power3.in',
+    overwrite: 'auto',
+    onComplete: function() {
+      var itemLabels = Array.from(panel.querySelectorAll('.sm-panel-itemLabel'));
+      if (itemLabels.length) gsap.set(itemLabels, { yPercent: 140, rotate: 10, opacity: 0 });
+      if (backdrop) backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  gsap.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+}
+
+function _animateSmText(opening) {
+  var inner = document.querySelector('.sm-toggle-textInner');
+  if (!inner || !window.gsap) return;
+  if (_smTextCycleAnim) _smTextCycleAnim.kill();
+
+  var currentLabel = opening ? 'Menu' : 'Close';
+  var targetLabel = opening ? 'Close' : 'Menu';
+  var cycles = 3;
+  var seq = [currentLabel];
+  var last = currentLabel;
+  for (var i = 0; i < cycles; i++) {
+    last = last === 'Menu' ? 'Close' : 'Menu';
+    seq.push(last);
+  }
+  if (last !== targetLabel) seq.push(targetLabel);
+  seq.push(targetLabel);
+
+  // Build DOM safely (no innerHTML)
+  while (inner.firstChild) inner.removeChild(inner.firstChild);
+  seq.forEach(function(label) {
+    var span = document.createElement('span');
+    span.className = 'sm-toggle-line';
+    span.textContent = label;
+    inner.appendChild(span);
+  });
+
+  gsap.set(inner, { yPercent: 0 });
+  var lineCount = seq.length;
+  var finalShift = ((lineCount - 1) / lineCount) * 100;
+  _smTextCycleAnim = gsap.to(inner, {
+    yPercent: -finalShift,
+    duration: 0.5 + lineCount * 0.07,
+    ease: 'power4.out'
+  });
 }
 
 function openMoreMenu() {
