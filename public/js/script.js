@@ -143,7 +143,7 @@ async function doLogin() {
 
     currentUser.name = data.name || 'Pengguna';
     loginBtn.textContent = '✓ Masuk...';
-    loginBtn.style.background = '#4A7C59';
+    loginBtn.style.background = '#4E7A62';
 
     await loadUserData();
 
@@ -356,19 +356,19 @@ async function openTabunganModal() {
     icon: '💰',
     title: 'Setor ke Tabungan Bank',
     message: `
-      <div style="text-align:center;margin-bottom:12px;padding:10px;background:rgba(74,124,89,0.08);border-radius:10px">
-        <div style="font-size:11px;color:#9CA3AF">Saldo Tabungan</div>
-        <div style="font-size:20px;font-weight:800;color:  #4A7C59">${fmt(Math.max(balTabungan,0))}</div>
+      <div style="text-align:center;margin-bottom:12px;padding:10px;background:rgba(78,122,98,0.08);border-radius:10px">
+        <div style="font-size:11px;color:#8A8F98">Saldo Tabungan</div>
+        <div style="font-size:20px;font-weight:800;color:  #4E7A62">${fmt(Math.max(balTabungan,0))}</div>
       </div>
-      <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Jumlah Setor (Rp)</label>
+      <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Jumlah Setor (Rp)</label>
       <input id="tab-amt-inp" type="text" placeholder="Contoh: 500.000"
-        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);
-               background:rgba(255,255,255,0.06);color:#EEE;font-size:14px;box-sizing:border-box;margin-bottom:10px"
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);
+               background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:14px;box-sizing:border-box;margin-bottom:10px"
         oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.')">
-      <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Sumber Dana</label>
+      <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Sumber Dana</label>
       <select id="tab-src-sel"
-        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);
-               background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box">
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);
+               background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box">
         <option value="mbanking">🏦 M-Banking</option>
         <option value="dompet">👛 Dompet</option>
       </select>`,
@@ -421,11 +421,11 @@ function renderDashboard() {
   const balTabungan  = transactions.filter(t => t.wallet === 'tabungan').reduce((s, t) => s + (t.type === 'in' ? t.amount : -t.amount), 0);
 
   document.getElementById('metrics').innerHTML = [
-    { icon:'💰', label:'Total Saldo',      val: fmtShort(Math.abs(balance)), color: balance >= 0 ? '#4A7C59' : '#B5651D', bg: balance >= 0 ? 'rgba(74,124,89,0.1)' : 'rgba(181,101,29,0.1)',   border: balance >= 0 ? 'rgba(74,124,89,0.15)' : 'rgba(181,101,29,0.15)' },
-    { icon:'🏦', label:'Saldo M-Banking',  val: fmtShort(balMbanking),       color:'#4A7C59', bg:'rgba(74,124,89,0.08)',  border:'rgba(74,124,89,0.12)' },
-    { icon:'👛', label:'Saldo Dompet',     val: fmtShort(balDompet),         color:'#C9A050', bg:'rgba(201,160,80,0.08)',  border:'rgba(201,160,80,0.12)' },
-    { icon:'🏧', label:'Tabungan Bank',    val: fmtShort(balTabungan),       color:'#4A7C59', bg:'rgba(74,124,89,0.08)', border:'rgba(74,124,89,0.12)', clickable: true },
-    { icon:'📉', label:'Total Keluar',     val: fmtShort(expense),           color:'#B5651D', bg:'rgba(181,101,29,0.08)',   border:'rgba(181,101,29,0.12)' },
+    { icon:'💰', label:'Total Saldo',      val: fmtShort(Math.abs(balance)), color: balance >= 0 ? '#4E7A62' : '#A05A4C', bg: balance >= 0 ? 'rgba(78,122,98,0.1)' : 'rgba(160,90,76,0.1)',   border: balance >= 0 ? 'rgba(78,122,98,0.15)' : 'rgba(160,90,76,0.15)' },
+    { icon:'🏦', label:'Saldo M-Banking',  val: fmtShort(balMbanking),       color:'#4E7A62', bg:'rgba(78,122,98,0.08)',  border:'rgba(78,122,98,0.12)' },
+    { icon:'👛', label:'Saldo Dompet',     val: fmtShort(balDompet),         color:'#A88C57', bg:'rgba(168,140,87,0.08)',  border:'rgba(168,140,87,0.12)' },
+    { icon:'🏧', label:'Tabungan Bank',    val: fmtShort(balTabungan),       color:'#4E7A62', bg:'rgba(78,122,98,0.08)', border:'rgba(78,122,98,0.12)', clickable: true },
+    { icon:'📉', label:'Total Keluar',     val: fmtShort(expense),           color:'#A05A4C', bg:'rgba(160,90,76,0.08)',   border:'rgba(160,90,76,0.12)' },
   ].map(m => `
     <div class="metric glass" style="border-color:${m.border};${m.clickable ? 'cursor:pointer' : ''}"
          ${m.clickable ? 'onclick="openTabunganModal()" title="Klik untuk setor/tarik tabungan"' : ''}>
@@ -437,12 +437,12 @@ function renderDashboard() {
   const catMap = {};
   txM.filter(t => t.type === 'out').forEach(t => { catMap[t.cat] = (catMap[t.cat] || 0) + t.amount; });
   const cats   = Object.keys(catMap);
-  const colors = ['#4A7C59','#B5651D','#C9A050','#2D2A26','#7C9A84','#8B6F3D','#A0785A','#6B8F76','#C4884A'];
+  const colors = ['#4E7A62','#A05A4C','#A88C57','#3A424D','#8C99A8','#6B7686','#9AA7B8','#55677E','#44546A'];
   if (chartCat) chartCat.destroy();
   chartCat = new Chart(document.getElementById('chartCat'), {
     type: 'doughnut',
     data: { labels: cats, datasets: [{ data: cats.map(c => catMap[c]), backgroundColor: colors.slice(0, cats.length), borderWidth: 0, hoverOffset: 8 }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 12, color: '#AAA' } } }, cutout: '65%' }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 12, color: '#8A8F98' } } }, cutout: '65%' }
   });
 
   const tL = [], tI = [], tO = [];
@@ -456,8 +456,8 @@ function renderDashboard() {
   if (chartTrend) chartTrend.destroy();
   chartTrend = new Chart(document.getElementById('chartTrend'), {
     type: 'bar',
-    data: { labels: tL, datasets: [ { label: 'Pemasukan', data: tI, backgroundColor: 'rgba(74,124,89,0.7)', borderRadius: 6, borderSkipped: false }, { label: 'Pengeluaran', data: tO, backgroundColor: 'rgba(181,101,29,0.7)', borderRadius: 6, borderSkipped: false } ]},
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 14 } } }, scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => fmtShort(v) }, grid: { color: 'rgba(45,42,38,0.06)' } } } }
+    data: { labels: tL, datasets: [ { label: 'Pemasukan', data: tI, backgroundColor: 'rgba(78,122,98,0.7)', borderRadius: 6, borderSkipped: false }, { label: 'Pengeluaran', data: tO, backgroundColor: 'rgba(160,90,76,0.7)', borderRadius: 6, borderSkipped: false } ]},
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 14 } } }, scales: { x: { grid: { display: false } }, y: { ticks: { callback: v => fmtShort(v) }, grid: { color: 'rgba(52,58,66,0.06)' } } } }
   });
 
   const needs = txM.filter(t => t.type === 'out' && t.ratio === 'needs').reduce((s, t) => s + t.amount, 0);
@@ -480,7 +480,7 @@ function renderDashboard() {
 /* ===== TX ROW ===== */
 function txRow(t) {
   const em  = CAT_EMOJI[t.cat] || '📦';
-  const ibg = t.type === 'out' ? 'rgba(181,101,29,0.1)' : 'rgba(74,124,89,0.1)';
+  const ibg = t.type === 'out' ? 'rgba(160,90,76,0.1)' : 'rgba(78,122,98,0.1)';
   const rl  = t.ratio === 'needs' ? 'Kebutuhan' : t.ratio === 'wants' ? 'Keinginan' : t.ratio === 'savings' ? 'Tabungan' : 'Pemasukan';
   const wal = t.wallet === 'mbanking' ? '🏦 M-Banking' : t.wallet === 'tabungan' ? '🏧 Tabungan Bank' : '👛 Dompet';
   return `<div class="tx-item">
@@ -792,7 +792,7 @@ function renderAnalisa() {
   });
   document.getElementById('monthly-tbody').innerHTML = Object.keys(byMonth).sort().reverse().map(k => {
     const b = byMonth[k], s = b.in - b.out, ok = s >= 0;
-    return `<tr><td style="font-weight:600;color:#DDD">${b.label}</td><td style="color:var(--green)">${fmt(b.in)}</td><td style="color:var(--red)">${fmt(b.out)}</td><td style="color:${ok ? '#4A7C59' : '#B5651D'};font-weight:700">${fmt(Math.abs(s))}</td><td><span class="badge" style="background:${ok ? 'rgba(74,124,89,0.12)' : 'rgba(181,101,29,0.12)'};color:${ok ? '#4A7C59' : '#B5651D'}">${ok ? 'Surplus' : 'Defisit'}</span></td></tr>`;
+    return `<tr><td style="font-weight:600;color:var(--color-ink)">${b.label}</td><td style="color:var(--green)">${fmt(b.in)}</td><td style="color:var(--red)">${fmt(b.out)}</td><td style="color:${ok ? '#4E7A62' : '#A05A4C'};font-weight:700">${fmt(Math.abs(s))}</td><td><span class="badge" style="background:${ok ? 'rgba(78,122,98,0.12)' : 'rgba(160,90,76,0.12)'};color:${ok ? '#4E7A62' : '#A05A4C'}">${ok ? 'Surplus' : 'Defisit'}</span></td></tr>`;
   }).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray-mid)">Belum ada data</td></tr>';
 
   /* ── Grafik tren per kategori ── */
@@ -801,13 +801,13 @@ function renderAnalisa() {
   /* ── Top pengeluaran ── */
   const catMap = {}; transactions.filter(t => t.type === 'out').forEach(t => { catMap[t.cat] = (catMap[t.cat] || 0) + t.amount; });
   const tops = Object.entries(catMap).sort((a, b) => b[1] - a[1]).slice(0, 5); const maxV = tops[0]?.[1] || 1;
-  document.getElementById('top-spending').innerHTML = tops.length ? tops.map(([cat, amt], i) => `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="font-weight:600;color:#DDD">${i + 1}. ${CAT_EMOJI[cat] || '📦'} ${cat}</span><span style="color:var(--red)">${fmt(amt)}</span></div><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(amt / maxV * 100)}%;background:linear-gradient(90deg,#B5651D,#C9A050);border-radius:3px;transition:width 0.6s"></div></div></div>`).join('') : '<div class="empty"><p>Belum ada data</p></div>';
+  document.getElementById('top-spending').innerHTML = tops.length ? tops.map(([cat, amt], i) => `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span style="font-weight:600;color:var(--color-ink)">${i + 1}. ${CAT_EMOJI[cat] || '📦'} ${cat}</span><span style="color:var(--red)">${fmt(amt)}</span></div><div style="height:6px;background:rgba(128,131,136,0.05);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(amt / maxV * 100)}%;background:linear-gradient(90deg,#A05A4C,#A88C57);border-radius:3px;transition:width 0.6s"></div></div></div>`).join('') : '<div class="empty"><p>Belum ada data</p></div>';
 
   /* ── Rasio 50/30/20 ── */
   const needs = transactions.filter(t => t.type === 'out' && t.ratio === 'needs').reduce((s, t) => s + t.amount, 0), wants = transactions.filter(t => t.type === 'out' && t.ratio === 'wants').reduce((s, t) => s + t.amount, 0), svgs  = transactions.filter(t => t.type === 'out' && t.ratio === 'savings').reduce((s, t) => s + t.amount, 0), tot   = (needs + wants + svgs) || 1;
-  document.getElementById('ratio-analisa').innerHTML = [ { label: 'Kebutuhan', amt: needs, target: 50, color: '#4A7C59', ok: needs / tot * 100 <= 50 }, { label: 'Keinginan', amt: wants, target: 30, color: '#C9A050', ok: wants / tot * 100 <= 30 }, { label: 'Tabungan',  amt: svgs,  target: 20, color: '#4A7C59', ok: svgs  / tot * 100 >= 20 } ].map(item => {
+  document.getElementById('ratio-analisa').innerHTML = [ { label: 'Kebutuhan', amt: needs, target: 50, color: '#4E7A62', ok: needs / tot * 100 <= 50 }, { label: 'Keinginan', amt: wants, target: 30, color: '#A88C57', ok: wants / tot * 100 <= 30 }, { label: 'Tabungan',  amt: svgs,  target: 20, color: '#4E7A62', ok: svgs  / tot * 100 >= 20 } ].map(item => {
     const pct = Math.round(item.amt / tot * 100);
-    return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:600;color:${item.color};font-size:13px">${item.label}</span><span style="font-size:11px;font-weight:700;color:${item.ok ? '#4A7C59' : '#B5651D'}">${item.ok ? '✅ Aman' : '⚠️ Perlu perhatian'}</span></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-mid);margin-bottom:7px"><span>Aktual: <strong style="color:#DDD">${pct}%</strong></span><span>Target: <strong style="color:#DDD">${item.target}%</strong></span></div><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.min(pct, 100)}%;background:${item.color};border-radius:3px;transition:width 0.6s"></div></div></div>`;
+    return `<div style="background:rgba(128,131,136,0.03);border:1px solid rgba(128,131,136,0.06);border-radius:14px;padding:14px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:600;color:${item.color};font-size:13px">${item.label}</span><span style="font-size:11px;font-weight:700;color:${item.ok ? '#4E7A62' : '#A05A4C'}">${item.ok ? '✅ Aman' : '⚠️ Perlu perhatian'}</span></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-mid);margin-bottom:7px"><span>Aktual: <strong style="color:var(--color-ink)">${pct}%</strong></span><span>Target: <strong style="color:var(--color-ink)">${item.target}%</strong></span></div><div style="height:6px;background:rgba(128,131,136,0.05);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.min(pct, 100)}%;background:${item.color};border-radius:3px;transition:width 0.6s"></div></div></div>`;
   }).join('');
 }
 
@@ -834,7 +834,7 @@ function renderCatTrendChart() {
 
   if (!topCats.length) return;
 
-  const COLORS = ['#4A7C59','#B5651D','#C9A050','#2D2A26','#7C9A84','#8B6F3D','#A0785A'];
+  const COLORS = ['#4E7A62','#A05A4C','#A88C57','#3A424D','#8C99A8','#6B7686','#9AA7B8'];
 
   // Build dataset per kategori
   const datasets = topCats.map((cat, i) => {
@@ -868,7 +868,7 @@ function renderCatTrendChart() {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 12, color: '#AAA' }
+          labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 12, color: '#8A8F98' }
         },
         tooltip: {
           callbacks: {
@@ -877,10 +877,10 @@ function renderCatTrendChart() {
         }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { color: '#9CA3AF', font: { size: 10 } } },
+        x: { grid: { display: false }, ticks: { color: '#8A8F98', font: { size: 10 } } },
         y: {
-          grid: { color: 'rgba(45,42,38,0.06)' },
-          ticks: { callback: v => fmtShort(v), color: '#9CA3AF', font: { size: 10 } }
+          grid: { color: 'rgba(52,58,66,0.06)' },
+          ticks: { callback: v => fmtShort(v), color: '#8A8F98', font: { size: 10 } }
         }
       }
     }
@@ -892,7 +892,7 @@ function renderExportStats() {
   const m  = document.getElementById('fil-month-e')?.value || 'all'; const tp = document.getElementById('fil-type-e')?.value  || 'all';
   const data = transactions.filter(t => { const d = new Date(t.date), mk = d.getFullYear() + '-' + (d.getMonth() + 1); if (m !== 'all' && mk !== m) return false; if (tp !== 'all' && t.type !== tp) return false; return true; });
   const out = data.filter(t => t.type === 'out').reduce((s, t) => s + t.amount, 0), inp = data.filter(t => t.type === 'in').reduce((s, t)  => s + t.amount, 0);
-  document.getElementById('ekspor-stats').innerHTML = [ { label: 'Total transaksi', val: data.length, color: '#DDD' }, { label: 'Pengeluaran', val: fmtShort(out), color: 'var(--red)' }, { label: 'Pemasukan', val: fmtShort(inp), color: 'var(--green)' } ].map(s => `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--gray-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em">${s.label}</div><div style="font-size:16px;font-weight:700;color:${s.color}">${s.val}</div></div>`).join('');
+  document.getElementById('ekspor-stats').innerHTML = [ { label: 'Total transaksi', val: data.length, color: 'var(--color-ink)' }, { label: 'Pengeluaran', val: fmtShort(out), color: 'var(--red)' }, { label: 'Pemasukan', val: fmtShort(inp), color: 'var(--green)' } ].map(s => `<div style="background:rgba(128,131,136,0.03);border:1px solid rgba(128,131,136,0.06);border-radius:12px;padding:10px;text-align:center"><div style="font-size:10px;color:var(--gray-mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em">${s.label}</div><div style="font-size:16px;font-weight:700;color:${s.color}">${s.val}</div></div>`).join('');
   document.getElementById('fil-month-e').onchange = renderExportStats; document.getElementById('fil-type-e').onchange  = renderExportStats;
 }
 
@@ -1566,8 +1566,8 @@ function renderWalletCharts() {
   // Kumpulkan semua wallet unik
   const wallets = [...new Set(transactions.map(t => t.wallet))];
   const walletLabel = { mbanking: '🏦 M-Banking', dompet: '👛 Dompet', tabungan: '🏧 Tabungan Bank' };
-  const walletColor = { mbanking: '#4A7C59', dompet: '#C9A050', tabungan: '#2D2A26' };
-  const defaultColors = ['#4A7C59','#B5651D','#C9A050','#2D2A26','#7C9A84'];
+  const walletColor = { mbanking: '#4E7A62', dompet: '#A88C57', tabungan: '#3A424D' };
+  const defaultColors = ['#4E7A62','#A05A4C','#A88C57','#3A424D','#8C99A8'];
 
   // ---- Chart 1: Saldo per wallet (donut) ----
   const balances = wallets.map(w =>
@@ -1585,7 +1585,7 @@ function renderWalletCharts() {
     },
     options: {
       responsive: true, maintainAspectRatio: false, cutout: '65%',
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 12, color: '#AAA' } } }
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 12, color: '#8A8F98' } } }
     }
   });
 
@@ -1626,10 +1626,10 @@ function renderWalletCharts() {
     data: { labels: tLabels, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 14, color: '#AAA' } } },
+      plugins: { legend: { labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 14, color: '#8A8F98' } } },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#666' } },
-        y: { ticks: { callback: v => fmtShort(v), color: '#666' }, grid: { color: 'rgba(45,42,38,0.06)' } }
+        y: { ticks: { callback: v => fmtShort(v), color: '#666' }, grid: { color: 'rgba(52,58,66,0.06)' } }
       }
     }
   });
@@ -1749,12 +1749,12 @@ function renderRecurringPage() {
   const freqLabel = { daily: 'Harian', weekly: 'Mingguan', monthly: 'Bulanan' };
   container.innerHTML = recurringList.map(r => {
     const due = isRecurringDue(r);
-    return `<div class="card glass" style="margin-bottom:1rem;${due ? 'border-color:rgba(201,160,80,0.3)' : ''}">
+    return `<div class="card glass" style="margin-bottom:1rem;${due ? 'border-color:rgba(168,140,87,0.3)' : ''}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div style="display:flex;align-items:center;gap:10px">
-          <div class="tx-icon" style="background:${r.type==='out'?'rgba(181,101,29,0.1)':'rgba(74,124,89,0.1)'}">${CAT_EMOJI[r.cat]||'📦'}</div>
+          <div class="tx-icon" style="background:${r.type==='out'?'rgba(160,90,76,0.1)':'rgba(78,122,98,0.1)'}">${CAT_EMOJI[r.cat]||'📦'}</div>
           <div>
-            <div style="font-weight:700;font-size:13px;color:#EEE">${r.desc}</div>
+            <div style="font-weight:700;font-size:13px;color:var(--color-ink)">${r.desc}</div>
             <div style="font-size:11px;color:var(--gray-mid);margin-top:2px">${r.cat} · ${freqLabel[r.freq]} · ${r.wallet==='mbanking'?'🏦':r.wallet==='tabungan'?'🏧':'👛'} ${r.wallet==='mbanking'?'M-Banking':r.wallet==='tabungan'?'Tabungan Bank':'Dompet'}</div>
           </div>
         </div>
@@ -2031,13 +2031,13 @@ async function openTopUpModal(id) {
     <div style="margin-bottom:10px">
       <label style="font-size:12px;color:var(--gray-mid);display:block;margin-bottom:4px">Jumlah Top Up (Rp)</label>
       <input id="topup-amt-inp" type="text" placeholder="Contoh: 500.000"
-        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);
-               background:rgba(255,255,255,0.06);color:#EEE;font-size:14px;box-sizing:border-box"
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);
+               background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:14px;box-sizing:border-box"
         oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.')">
       <label style="font-size:12px;color:var(--gray-mid);display:block;margin:10px 0 4px">Sumber Dana</label>
       <select id="topup-wallet-sel"
-        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);
-               background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box">
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);
+               background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box">
         <option value="mbanking" ${walletDefault==='mbanking'?'selected':''}>🏦 M-Banking</option>
         <option value="dompet"   ${walletDefault==='dompet'  ?'selected':''}>👛 Dompet</option>
       </select>
@@ -2104,14 +2104,14 @@ function renderTargets() {
       const dl = Math.ceil((new Date(t.date) - today) / 86400000);
       daysLeft  = dl > 0 ? `${dl} hari lagi` : dl === 0 ? 'Hari ini!' : `Lewat ${Math.abs(dl)} hari`;
     }
-    const barColor = done ? '#4A7C59' : pct >= 60 ? '#4A7C59' : pct >= 30 ? '#C9A050' : '#B5651D';
+    const barColor = done ? '#4E7A62' : pct >= 60 ? '#4E7A62' : pct >= 30 ? '#A88C57' : '#A05A4C';
 
-    return `<div class="card glass target-card" style="margin-bottom:1rem;${done ? 'border-color:rgba(74,124,89,0.3)' : ''}">
+    return `<div class="card glass target-card" style="margin-bottom:1rem;${done ? 'border-color:rgba(78,122,98,0.3)' : ''}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div style="display:flex;align-items:center;gap:12px">
           <div class="target-emoji">${t.emoji}</div>
           <div>
-            <div style="font-weight:700;font-size:14px;color:#EEE">${t.name}</div>
+            <div style="font-weight:700;font-size:14px;color:var(--color-ink)">${t.name}</div>
             <div style="font-size:11px;color:var(--gray-mid);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
               <span>${t.wallet === 'mbanking' ? '🏦 M-Banking' : '👛 Dompet'}</span>
               ${t.date ? `<span>· 🗓 ${t.date} ${daysLeft ? '· ' + daysLeft : ''}</span>` : ''}
@@ -2124,15 +2124,15 @@ function renderTargets() {
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-mid);margin-bottom:6px">
-        <span>Terkumpul: <strong style="color:#DDD">${fmt(t.saved)}</strong></span>
-        <span>Target: <strong style="color:#DDD">${fmt(t.amount)}</strong></span>
+        <span>Terkumpul: <strong style="color:var(--color-ink)">${fmt(t.saved)}</strong></span>
+        <span>Target: <strong style="color:var(--color-ink)">${fmt(t.amount)}</strong></span>
       </div>
-      <div style="height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;margin-bottom:6px">
+      <div style="height:8px;background:rgba(128,131,136,0.05);border-radius:4px;overflow:hidden;margin-bottom:6px">
         <div style="height:100%;width:${pct}%;background:${barColor};border-radius:4px;transition:width 0.6s cubic-bezier(.4,0,.2,1)"></div>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px">
         <span style="color:${barColor};font-weight:700">${pct}% tercapai</span>
-        ${!done ? `<span style="color:var(--gray-mid)">Sisa: <strong style="color:#DDD">${fmt(remain)}</strong></span>` : ''}
+        ${!done ? `<span style="color:var(--gray-mid)">Sisa: <strong style="color:var(--color-ink)">${fmt(remain)}</strong></span>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -2245,7 +2245,7 @@ function renderHealthScore() {
 
   const { score, criteria } = calcHealthScore();
 
-  const color = score >= 80 ? '#4A7C59' : score >= 60 ? '#4A7C59' : score >= 40 ? '#C9A050' : '#B5651D';
+  const color = score >= 80 ? '#4E7A62' : score >= 60 ? '#4E7A62' : score >= 40 ? '#A88C57' : '#A05A4C';
   const label = score >= 80 ? 'Sangat Sehat 🎉' : score >= 60 ? 'Cukup Sehat 👍' : score >= 40 ? 'Perlu Perhatian ⚠️' : 'Kritis 🚨';
   const desc  = score >= 80
     ? 'Keuanganmu dalam kondisi prima! Pertahankan kebiasaan baik ini.'
@@ -2263,11 +2263,11 @@ function renderHealthScore() {
   const criteriaHTML = criteria.map(c => {
     const icon = c.ok === true ? '✅' : c.ok === false ? '❌' : c.ok === 'partial' ? '🟡' : '⬜';
     return `
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(128,131,136,0.05)">
         <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-mid)">
           <span>${icon}</span><span>${c.label}</span>
         </div>
-        <span style="font-size:12px;font-weight:700;color:${c.pts >= 15 ? '#4A7C59' : c.pts >= 8 ? '#C9A050' : '#B5651D'}">${c.pts}/20</span>
+        <span style="font-size:12px;font-weight:700;color:${c.pts >= 15 ? '#4E7A62' : c.pts >= 8 ? '#A88C57' : '#A05A4C'}">${c.pts}/20</span>
       </div>`;
   }).join('');
 
@@ -2276,7 +2276,7 @@ function renderHealthScore() {
       <div style="flex-shrink:0">
         <svg width="140" height="80" viewBox="0 0 140 80">
           <!-- Track -->
-          <path d="M 16 70 A 54 54 0 0 1 124 70" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12" stroke-linecap="round"/>
+          <path d="M 16 70 A 54 54 0 0 1 124 70" fill="none" stroke="rgba(128,131,136,0.08)" stroke-width="12" stroke-linecap="round"/>
           <!-- Fill -->
           <path d="M 16 70 A 54 54 0 0 1 124 70" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round"
             stroke-dasharray="${dash} ${circumference}" style="transition:stroke-dasharray 1s ease"/>
@@ -2300,7 +2300,7 @@ function renderHealthScore() {
   // Light mode text fix
   if (document.documentElement.getAttribute('data-theme') === 'light') {
     wrap.querySelectorAll('[style*="color:var(--gray-mid)"]').forEach(el => {
-      el.style.color = '#6B7280';
+      el.style.color = '#8A8F98';
     });
   }
 }
@@ -2427,10 +2427,10 @@ function showToast(message, type = 'info', duration = 3000) {
   if (!container) return;
 
   const colors = {
-    success: { bg: 'rgba(74,124,89,0.92)', border: 'rgba(74,124,89,0.4)', icon: '✅' },
-    error:   { bg: 'rgba(181,101,29,0.92)',  border: 'rgba(181,101,29,0.4)',  icon: '❌' },
-    warning: { bg: 'rgba(201,160,80,0.92)', border: 'rgba(201,160,80,0.4)', icon: '⚠️' },
-    info:    { bg: 'rgba(45,42,38,0.92)', border: 'rgba(45,42,38,0.4)', icon: 'ℹ️' },
+    success: { bg: 'rgba(78,122,98,0.92)', border: 'rgba(78,122,98,0.4)', icon: '✅' },
+    error:   { bg: 'rgba(160,90,76,0.92)',  border: 'rgba(160,90,76,0.4)',  icon: '❌' },
+    warning: { bg: 'rgba(168,140,87,0.92)', border: 'rgba(168,140,87,0.4)', icon: '⚠️' },
+    info:    { bg: 'rgba(52,58,66,0.92)', border: 'rgba(52,58,66,0.4)', icon: 'ℹ️' },
   };
   const c = colors[type] || colors.info;
 
@@ -2487,8 +2487,8 @@ function showConfirm(options) {
 
     const danger = options.danger !== false;
     okBtn.style.background = danger
-      ? 'linear-gradient(135deg,#B5651D,#9A4A15)'
-      : '#4A7C59';
+      ? 'linear-gradient(135deg,#A05A4C,#7E463B)'
+      : '#4E7A62';
     okBtn.style.color = '#fff';
 
     overlay.style.display = 'flex';
@@ -2571,20 +2571,20 @@ function renderBorosHarian() {
     const pct     = Math.round(total / maxTotal * 100);
     const isBoros = i === borosIdx && total > 0;
     const barColor = isBoros
-      ? '#B5651D'
-      : pct > 60 ? '#C9A050'
-      : pct > 30 ? '#4A7C59'
-      : 'rgba(255,255,255,0.15)';
+      ? '#A05A4C'
+      : pct > 60 ? '#A88C57'
+      : pct > 30 ? '#4E7A62'
+      : 'rgba(128,131,136,0.15)';
 
     return `
       <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0">
-        <div style="font-size:11px;font-weight:700;color:${isBoros ? '#B5651D' : 'var(--gray-mid)'};white-space:nowrap">
+        <div style="font-size:11px;font-weight:700;color:${isBoros ? '#A05A4C' : 'var(--gray-mid)'};white-space:nowrap">
           ${isBoros ? '🔥' : ''}${fmtShort(total)}
         </div>
-        <div style="width:100%;height:120px;background:rgba(255,255,255,0.04);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden">
+        <div style="width:100%;height:120px;background:rgba(128,131,136,0.04);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden">
           <div style="width:100%;height:${Math.max(pct,2)}%;background:${barColor};border-radius:6px 6px 0 0;transition:height 0.6s cubic-bezier(.4,0,.2,1)"></div>
         </div>
-        <div style="font-size:11px;font-weight:${isBoros ? '800' : '600'};color:${isBoros ? '#B5651D' : 'var(--gray-mid)'}">
+        <div style="font-size:11px;font-weight:${isBoros ? '800' : '600'};color:${isBoros ? '#A05A4C' : 'var(--gray-mid)'}">
           ${hari.slice(0, 3)}
         </div>
         <div style="font-size:10px;color:var(--gray-mid)">${count}x</div>
@@ -2600,19 +2600,19 @@ function renderBorosHarian() {
       ${bars}
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px">
-      <div style="background:rgba(181,101,29,0.08);border:1px solid rgba(181,101,29,0.15);border-radius:12px;padding:10px;text-align:center">
+      <div style="background:rgba(160,90,76,0.08);border:1px solid rgba(160,90,76,0.15);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:10px;color:var(--gray-mid);margin-bottom:4px">🔥 Paling boros</div>
-        <div style="font-size:13px;font-weight:800;color:  #B5651D">${HARI[borosIdx]}</div>
+        <div style="font-size:13px;font-weight:800;color:  #A05A4C">${HARI[borosIdx]}</div>
         <div style="font-size:10px;color:var(--gray-mid);margin-top:2px">${fmtShort(maxTotal)}</div>
       </div>
-      <div style="background:rgba(74,124,89,0.08);border:1px solid rgba(74,124,89,0.15);border-radius:12px;padding:10px;text-align:center">
+      <div style="background:rgba(78,122,98,0.08);border:1px solid rgba(78,122,98,0.15);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:10px;color:var(--gray-mid);margin-bottom:4px">🌿 Paling hemat</div>
-        <div style="font-size:13px;font-weight:800;color:  #4A7C59">${hematIdx >= 0 ? HARI[hematIdx] : '-'}</div>
+        <div style="font-size:13px;font-weight:800;color:  #4E7A62">${hematIdx >= 0 ? HARI[hematIdx] : '-'}</div>
         <div style="font-size:10px;color:var(--gray-mid);margin-top:2px">${hematIdx >= 0 ? fmtShort(dayTotals[hematIdx]) : '-'}</div>
       </div>
-      <div style="background:rgba(74,124,89,0.08);border:1px solid rgba(74,124,89,0.15);border-radius:12px;padding:10px;text-align:center">
+      <div style="background:rgba(78,122,98,0.08);border:1px solid rgba(78,122,98,0.15);border-radius:12px;padding:10px;text-align:center">
         <div style="font-size:10px;color:var(--gray-mid);margin-bottom:4px">📊 Rata-rata/hari</div>
-        <div style="font-size:13px;font-weight:800;color:  #4A7C59">${fmtShort(avg)}</div>
+        <div style="font-size:13px;font-weight:800;color:  #4E7A62">${fmtShort(avg)}</div>
         <div style="font-size:10px;color:var(--gray-mid);margin-top:2px">per hari</div>
       </div>
     </div>
@@ -2830,9 +2830,9 @@ function renderKalender() {
 
     /* Heat-map background */
     const heatBg = data && data.out > 0
-      ? `rgba(181,101,29,${(0.08 + intensity / 100 * 0.35).toFixed(2)})`
+      ? `rgba(160,90,76,${(0.08 + intensity / 100 * 0.35).toFixed(2)})`
       : data && data.in > 0
-      ? `rgba(74,124,89,0.08)`
+      ? `rgba(78,122,98,0.08)`
       : '';
 
     cells += `
@@ -2896,9 +2896,9 @@ function showCalDetail(dateStr) {
   const inc = txDay.filter(t => t.type === 'in').reduce((s, t)  => s + t.amount, 0);
 
   det.innerHTML = `
-    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07)">
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(128,131,136,0.07)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-size:12px;font-weight:700;color:var(--gray-dark,#EEE)">📅 ${dateStr}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--gray-dark,var(--color-ink))">📅 ${dateStr}</div>
         <div style="font-size:11px;color:var(--gray-mid)">
           ${txDay.length} transaksi &nbsp;·&nbsp;
           <span style="color:var(--green)">+${fmtShort(inc)}</span>
@@ -2934,13 +2934,13 @@ function renderTabunganPage() {
   // ── Stats grid ──
   const statsEl = document.getElementById('tab-stats-grid');
   if (statsEl) statsEl.innerHTML = [
-    { label: 'Total Disetor', val: fmtShort(totalSetor), color: '#4A7C59', icon: '💰' },
-    { label: 'Total Ditarik', val: fmtShort(totalTarik), color: '#B5651D', icon: '🏧' },
-    { label: 'Rata-rata/Bulan', val: fmtShort(avgSetor), color: '#4A7C59', icon: '📊' },
+    { label: 'Total Disetor', val: fmtShort(totalSetor), color: '#4E7A62', icon: '💰' },
+    { label: 'Total Ditarik', val: fmtShort(totalTarik), color: '#A05A4C', icon: '🏧' },
+    { label: 'Rata-rata/Bulan', val: fmtShort(avgSetor), color: '#4E7A62', icon: '📊' },
   ].map(s => `
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:12px 10px;text-align:center">
+    <div style="background:rgba(128,131,136,0.03);border:1px solid rgba(128,131,136,0.07);border-radius:14px;padding:12px 10px;text-align:center">
       <div style="font-size:18px;margin-bottom:4px">${s.icon}</div>
-      <div style="font-size:10px;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">${s.label}</div>
+      <div style="font-size:10px;color:#8A8F98;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px">${s.label}</div>
       <div style="font-size:14px;font-weight:800;color:${s.color}">${s.val}</div>
     </div>`).join('');
 
@@ -2959,15 +2959,15 @@ function renderTabunganPage() {
     } else {
       histEl.innerHTML = sorted.map(t => {
         const isIn = t.type === 'in';
-        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)">
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(128,131,136,0.05)">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:36px;height:36px;border-radius:10px;background:${isIn ? 'rgba(74,124,89,0.12)' : 'rgba(181,101,29,0.12)'};display:flex;align-items:center;justify-content:center;font-size:16px">${isIn ? '💰' : '🏧'}</div>
+            <div style="width:36px;height:36px;border-radius:10px;background:${isIn ? 'rgba(78,122,98,0.12)' : 'rgba(160,90,76,0.12)'};display:flex;align-items:center;justify-content:center;font-size:16px">${isIn ? '💰' : '🏧'}</div>
             <div>
-              <div style="font-size:13px;font-weight:600;color:#EEE">${t.desc}</div>
-              <div style="font-size:11px;color:#9CA3AF;margin-top:1px">${t.date}</div>
+              <div style="font-size:13px;font-weight:600;color:var(--color-ink)">${t.desc}</div>
+              <div style="font-size:11px;color:#8A8F98;margin-top:1px">${t.date}</div>
             </div>
           </div>
-          <div style="font-size:14px;font-weight:700;color:${isIn ? '#4A7C59' : '#B5651D'}">${isIn ? '+' : '-'}${fmtShort(t.amount)}</div>
+          <div style="font-size:14px;font-weight:700;color:${isIn ? '#4E7A62' : '#A05A4C'}">${isIn ? '+' : '-'}${fmtShort(t.amount)}</div>
         </div>`;
       }).join('');
     }
@@ -3002,18 +3002,18 @@ function renderTabunganChart(txTabungan) {
     data: {
       labels: months.map(m => m.label),
       datasets: [
-        { type: 'bar',  label: 'Setor',  data: dataSetor, backgroundColor: 'rgba(74,124,89,0.5)',  borderColor: '#4A7C59', borderWidth: 1, borderRadius: 6 },
-        { type: 'bar',  label: 'Tarik',  data: dataTarik, backgroundColor: 'rgba(181,101,29,0.4)',   borderColor: '#B5651D', borderWidth: 1, borderRadius: 6 },
-        { type: 'line', label: 'Saldo',  data: dataSaldo, borderColor: '#4A7C59', backgroundColor: 'rgba(74,124,89,0.1)', borderWidth: 2, pointRadius: 4, tension: 0.4, fill: true, yAxisID: 'y2' },
+        { type: 'bar',  label: 'Setor',  data: dataSetor, backgroundColor: 'rgba(78,122,98,0.5)',  borderColor: '#4E7A62', borderWidth: 1, borderRadius: 6 },
+        { type: 'bar',  label: 'Tarik',  data: dataTarik, backgroundColor: 'rgba(160,90,76,0.4)',   borderColor: '#A05A4C', borderWidth: 1, borderRadius: 6 },
+        { type: 'line', label: 'Saldo',  data: dataSaldo, borderColor: '#4E7A62', backgroundColor: 'rgba(78,122,98,0.1)', borderWidth: 2, pointRadius: 4, tension: 0.4, fill: true, yAxisID: 'y2' },
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 10, color: '#AAA' } } },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11, family: 'DM Sans' }, boxWidth: 10, padding: 10, color: '#8A8F98' } } },
       scales: {
-        x: { ticks: { color: '#9CA3AF', font: { size: 10 } }, grid: { color: 'rgba(45,42,38,0.06)' } },
-        y:  { ticks: { color: '#9CA3AF', font: { size: 10 }, callback: v => fmtShort(v) }, grid: { color: 'rgba(45,42,38,0.06)' } },
-        y2: { position: 'right', ticks: { color: '#4A7C59', font: { size: 10 }, callback: v => fmtShort(v) }, grid: { display: false } }
+        x: { ticks: { color: '#8A8F98', font: { size: 10 } }, grid: { color: 'rgba(52,58,66,0.06)' } },
+        y:  { ticks: { color: '#8A8F98', font: { size: 10 }, callback: v => fmtShort(v) }, grid: { color: 'rgba(52,58,66,0.06)' } },
+        y2: { position: 'right', ticks: { color: '#4E7A62', font: { size: 10 }, callback: v => fmtShort(v) }, grid: { display: false } }
       }
     }
   });
@@ -3024,19 +3024,19 @@ function renderRencanaNabungList() {
   const el = document.getElementById('tab-rencana-list');
   if (!el) return;
   if (!rencanaNabung.length) {
-    el.innerHTML = `<div style="text-align:center;padding:12px 0;color:#9CA3AF;font-size:13px">Belum ada rencana nabung otomatis</div>`;
+    el.innerHTML = `<div style="text-align:center;padding:12px 0;color:#8A8F98;font-size:13px">Belum ada rencana nabung otomatis</div>`;
     return;
   }
   const freqLabel = { daily:'Harian', weekly:'Mingguan', monthly:'Bulanan' };
   el.innerHTML = rencanaNabung.map(r => {
     const due = isRencanaDue(r);
-    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid ${due ? 'rgba(201,160,80,0.3)' : 'rgba(255,255,255,0.06)'};margin-bottom:8px">
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;background:rgba(128,131,136,0.03);border:1px solid ${due ? 'rgba(168,140,87,0.3)' : 'rgba(128,131,136,0.06)'};margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:22px">🎯</span>
         <div>
-          <div style="font-size:13px;font-weight:700;color:#EEE">${r.nama}</div>
-          <div style="font-size:11px;color:#9CA3AF">${freqLabel[r.freq]} · ${r.src === 'mbanking' ? '🏦 M-Banking' : '👛 Dompet'} → 🏧 · ${fmt(r.amount)}</div>
-          ${due ? '<div style="font-size:10px;color:#F59E0B;font-weight:700;margin-top:2px">⏰ Jatuh tempo!</div>' : `<div style="font-size:10px;color:#9CA3AF;margin-top:2px">Terakhir: ${r.lastRun || '-'}</div>`}
+          <div style="font-size:13px;font-weight:700;color:var(--color-ink)">${r.nama}</div>
+          <div style="font-size:11px;color:#8A8F98">${freqLabel[r.freq]} · ${r.src === 'mbanking' ? '🏦 M-Banking' : '👛 Dompet'} → 🏧 · ${fmt(r.amount)}</div>
+          ${due ? '<div style="font-size:10px;color:#A88C57;font-weight:700;margin-top:2px">⏰ Jatuh tempo!</div>' : `<div style="font-size:10px;color:#8A8F98;margin-top:2px">Terakhir: ${r.lastRun || '-'}</div>`}
         </div>
       </div>
       <div style="display:flex;gap:6px">
@@ -3064,26 +3064,26 @@ async function openRencanaNabungModal() {
     message: `
       <div style="display:flex;flex-direction:column;gap:10px">
         <div>
-          <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Nama Rencana</label>
+          <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Nama Rencana</label>
           <input id="rn-nama" type="text" placeholder="Contoh: Nabung Bulanan"
-            style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box">
+            style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box">
         </div>
         <div>
-          <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Jumlah (Rp)</label>
+          <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Jumlah (Rp)</label>
           <input id="rn-amount" type="text" placeholder="Contoh: 500.000"
-            style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box"
+            style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box"
             oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.')">
         </div>
         <div>
-          <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Sumber Dana</label>
-          <select id="rn-src" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box">
+          <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Sumber Dana</label>
+          <select id="rn-src" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box">
             <option value="mbanking">🏦 M-Banking</option>
             <option value="dompet">👛 Dompet</option>
           </select>
         </div>
         <div>
-          <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Frekuensi</label>
-          <select id="rn-freq" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box">
+          <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Frekuensi</label>
+          <select id="rn-freq" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box">
             <option value="weekly">Mingguan</option>
             <option value="monthly" selected>Bulanan</option>
             <option value="daily">Harian</option>
@@ -3151,17 +3151,17 @@ async function openTabunganTarikModal() {
     icon: '🏧',
     title: 'Tarik Tabungan Bank',
     message: `
-      <div style="text-align:center;margin-bottom:12px;padding:10px;background:rgba(74,124,89,0.08);border-radius:10px">
-        <div style="font-size:11px;color:#9CA3AF">Saldo tersedia</div>
-        <div style="font-size:20px;font-weight:800;color:  #4A7C59">${fmt(balTabungan)}</div>
+      <div style="text-align:center;margin-bottom:12px;padding:10px;background:rgba(78,122,98,0.08);border-radius:10px">
+        <div style="font-size:11px;color:#8A8F98">Saldo tersedia</div>
+        <div style="font-size:20px;font-weight:800;color:  #4E7A62">${fmt(balTabungan)}</div>
       </div>
-      <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Jumlah Tarik (Rp)</label>
+      <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Jumlah Tarik (Rp)</label>
       <input id="tarik-amt-inp" type="text" placeholder="Contoh: 200.000"
-        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#EEE;font-size:14px;box-sizing:border-box;margin-bottom:10px"
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:14px;box-sizing:border-box;margin-bottom:10px"
         oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.')">
-      <label style="font-size:12px;color:#9CA3AF;display:block;margin-bottom:4px">Masuk ke</label>
+      <label style="font-size:12px;color:#8A8F98;display:block;margin-bottom:4px">Masuk ke</label>
       <select id="tarik-dst-sel"
-        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#EEE;font-size:13px;box-sizing:border-box">
+        style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,131,136,0.12);background:rgba(128,131,136,0.06);color:var(--color-ink);font-size:13px;box-sizing:border-box">
         <option value="mbanking">🏦 M-Banking</option>
         <option value="dompet">👛 Dompet</option>
       </select>`,

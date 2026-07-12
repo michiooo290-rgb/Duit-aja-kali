@@ -1,32 +1,32 @@
 /* ============================================================
    TOKENS.CSS — Duit Tracker Pro
-   Hallmark design system · paper ledger workbench
-   anchor hue: ledger-teal oklch(45% 0.105 176)
-   paper: oklch(95.5% 0.018 88)
+   Hallmark design system · quiet minimalist
+   anchor hue: ink-blue oklch(42% 0.055 255)
+   paper: oklch(98% 0 0) — pure neutral, zero chroma
    ============================================================ */
 
 /* ── Google Fonts (DM Sans + Lora already loaded via index.html) ── */
 
 :root {
   /* ── Color — Light (default) ── */
-  --color-paper:        oklch(95.5% 0.018 88);     /* warm off-white */
-  --color-paper-2:      oklch(91.5% 0.022 85);     /* slightly deeper warm */
-  --color-surface:      oklch(98%   0.010 88);     /* near-white card */
-  --color-surface-2:    oklch(93%   0.018 86);     /* hovered surface */
-  --color-ink:          oklch(22%   0.020 64);     /* near-black warm */
-  --color-muted:        oklch(52%   0.018 70);     /* mid-tone */
-  --color-rule:         oklch(80%   0.018 80);     /* hairline */
-  --color-rule-strong:  oklch(65%   0.020 75);     /* strong rule */
+  --color-paper:        oklch(98%   0 0);          /* pure neutral off-white */
+  --color-paper-2:      oklch(95.5% 0 0);          /* slightly deeper neutral */
+  --color-surface:      oklch(100%  0 0);          /* white card */
+  --color-surface-2:    oklch(96.5% 0 0);          /* hovered surface */
+  --color-ink:          oklch(18%   0 0);          /* near-black */
+  --color-muted:        oklch(50%   0 0);          /* mid grey */
+  --color-rule:         oklch(89%   0 0);          /* hairline */
+  --color-rule-strong:  oklch(74%   0 0);          /* strong rule */
 
-  /* ── Accent — ledger-teal ── */
-  --color-accent:       oklch(45%   0.105 176);    /* primary teal */
-  --color-accent-2:     oklch(35%   0.090 176);    /* darker teal for hover */
-  --color-focus:        oklch(55%   0.120 176);    /* focus ring */
+  /* ── Accent — restrained ink-blue ── */
+  --color-accent:       oklch(42%   0.055 255);    /* primary ink-blue */
+  --color-accent-2:     oklch(32%   0.050 255);    /* darker for hover */
+  --color-focus:        oklch(52%   0.090 255);    /* focus ring */
 
-  /* ── Semantic ── */
-  --color-success:      oklch(48%   0.110 152);    /* sage green */
-  --color-danger:       oklch(52%   0.110  42);    /* earth red-brown */
-  --color-warning:      oklch(62%   0.100  72);    /* amber */
+  /* ── Semantic — desaturated ── */
+  --color-success:      oklch(46%   0.070 155);    /* quiet green */
+  --color-danger:       oklch(48%   0.100  25);    /* quiet red */
+  --color-warning:      oklch(60%   0.080  80);    /* quiet amber */
 
   /* ── Rule shorthands ── */
   --rule-hairline: 1px solid var(--color-rule);
@@ -59,20 +59,20 @@
 
 /* ── Dark mode token overrides ── */
 [data-theme="dark"] {
-  --color-paper:        oklch(15%   0.015 64);
-  --color-paper-2:      oklch(19%   0.018 64);
-  --color-surface:      oklch(20%   0.016 64);
-  --color-surface-2:    oklch(24%   0.018 64);
-  --color-ink:          oklch(92%   0.012 80);
-  --color-muted:        oklch(58%   0.018 75);
-  --color-rule:         oklch(32%   0.018 70);
-  --color-rule-strong:  oklch(45%   0.020 68);
+  --color-paper:        oklch(14%   0 0);
+  --color-paper-2:      oklch(18%   0 0);
+  --color-surface:      oklch(19%   0 0);
+  --color-surface-2:    oklch(23%   0 0);
+  --color-ink:          oklch(93%   0 0);
+  --color-muted:        oklch(60%   0 0);
+  --color-rule:         oklch(30%   0 0);
+  --color-rule-strong:  oklch(44%   0 0);
 
-  --color-accent:       oklch(60%   0.105 176);
-  --color-accent-2:     oklch(70%   0.090 176);
-  --color-focus:        oklch(65%   0.120 176);
+  --color-accent:       oklch(74%   0.050 255);
+  --color-accent-2:     oklch(82%   0.045 255);
+  --color-focus:        oklch(70%   0.090 255);
 
-  --color-success:      oklch(62%   0.110 152);
-  --color-danger:       oklch(66%   0.110  42);
-  --color-warning:      oklch(72%   0.095  72);
+  --color-success:      oklch(68%   0.090 155);
+  --color-danger:       oklch(68%   0.110  25);
+  --color-warning:      oklch(74%   0.080  80);
 }
