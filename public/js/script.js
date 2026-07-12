@@ -431,7 +431,7 @@ function renderDashboard() {
          ${m.clickable ? 'onclick="openTabunganModal()" title="Klik untuk setor/tarik tabungan"' : ''}>
       <div class="metric-icon" style="background:${m.bg};border-color:${m.border}">${m.icon}</div>
       <div class="metric-label">${m.label}${m.clickable ? ' <span style=\"font-size:9px;opacity:0.6\">(klik)</span>' : ''}</div>
-      <div class="metric-value" style="color:${m.color}">${m.val}</div>
+      <div class="metric-value" style="color:${m.color}">${m.val.replace(/^Rp\s*/, '<span class="metric-currency">Rp</span> ')}</div>
     </div>`).join('');
 
   const catMap = {};

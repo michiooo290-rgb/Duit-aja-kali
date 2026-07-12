@@ -113,6 +113,7 @@
     const dur    = 600;       // ms
     const start  = performance.now();
     const origText = el.textContent;  // preserve original text format
+    const origHTML = el.innerHTML;    // preserve markup (e.g. .metric-currency span) for final restore
 
     /* Detect format: jt (million) / rb (thousand) / plain */
     const isMillion = origText.includes('jt');
@@ -129,7 +130,7 @@
       else                 el.textContent = 'Rp ' + Math.round(val).toLocaleString('id-ID');
 
       if (progress < 1) requestAnimationFrame(tick);
-      else el.textContent = origText; // restore exact text
+      else el.innerHTML = origHTML; // restore exact markup (keeps .metric-currency span)
     }
     requestAnimationFrame(tick);
   }

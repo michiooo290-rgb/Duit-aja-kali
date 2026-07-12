@@ -719,6 +719,17 @@ button[onclick="saveEditTarget()"] {
   letter-spacing: -0.055em !important;
   font-variant-numeric: tabular-nums !important;
   animation: none !important;
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 5px !important;
+}
+
+.metric-currency {
+  font-family: var(--font-label) !important;
+  font-size: 0.32em !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  color: var(--color-muted) !important;
 }
 
 .metric:first-child .metric-value {
