@@ -1280,53 +1280,48 @@ function openStaggeredMenu() {
   if (_smOpenTl) _smOpenTl.kill();
 
   var layers = Array.from(prelayers.querySelectorAll('.sm-prelayer'));
-  var itemLabels = Array.from(panel.querySelectorAll('.sm-panel-itemLabel'));
 
-  // Reset to initial states first
-  gsap.set(backdrop, { opacity: 0 });
-  gsap.set(prelayers, { opacity: 1, x: 0 });
-  gsap.set(layers, { x: '100%', opacity: 1 });
-  gsap.set(panel, { x: '100%', opacity: 1 });
-  if (itemLabels.length) {
-    gsap.set(itemLabels, { y: 50, opacity: 0, rotation: 10 });
+  // Simple approach: use direct style manipulation for reliability
+  // First hide everything
+  if (backdrop) backdrop.style.opacity = '0';
+  prelayers.style.opacity = '0';
+  layers.forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(100%)';
+  });
+  panel.style.opacity = '0';
+  panel.style.transform = 'translateX(100%)';
+
+  // Show backdrop immediately
+  if (backdrop) {
+    backdrop.style.transition = 'opacity 0.3s ease';
+    backdrop.style.opacity = '1';
   }
 
-  // Build timeline
-  var tl = gsap.timeline({
-    onComplete: function() { _smBusy = false; },
-    onKill: function() { _smBusy = false; }
-  });
-
-  // Safety timeout - reset _smBusy if animation takes too long (3 seconds)
+  // Show prelayers with delay
   setTimeout(function() {
-    if (_smBusy) {
-      _smBusy = false;
-    }
-  }, 3000);
+    prelayers.style.transition = 'opacity 0.3s ease';
+    prelayers.style.opacity = '1';
+    layers.forEach(function(el, i) {
+      el.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      setTimeout(function() {
+        el.style.transform = 'translateX(0)';
+        el.style.opacity = '1';
+      }, i * 70);
+    });
+  }, 100);
 
-  // Stagger prelayers
-  layers.forEach(function(layer, i) {
-    tl.to(layer, { x: '0%', duration: 0.5, ease: 'power4.out' }, i * 0.07);
-  });
+  // Show panel after prelayers
+  setTimeout(function() {
+    panel.style.transition = 'transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease';
+    panel.style.transform = 'translateX(0)';
+    panel.style.opacity = '1';
+  }, 300);
 
-  // Panel slides in after prelayers
-  var panelInsertTime = layers.length ? (layers.length - 1) * 0.07 + 0.08 : 0;
-  tl.to(panel, { x: '0%', duration: 0.65, ease: 'power4.out' }, panelInsertTime);
-
-  // Backdrop fades in
-  tl.to(backdrop, { opacity: 1, duration: 0.3, ease: 'power2.out' }, panelInsertTime);
-
-  // Items stagger in
-  if (itemLabels.length) {
-    var itemsStart = panelInsertTime + 0.65 * 0.15;
-    tl.to(itemLabels, {
-      y: 0, rotation: 0, opacity: 1,
-      duration: 1, ease: 'power4.out',
-      stagger: { each: 0.1, from: 'start' }
-    }, itemsStart);
-  }
-
-  _smOpenTl = tl;
+  // Reset busy flag after animation completes
+  setTimeout(function() {
+    _smBusy = false;
+  }, 1000);
 }
 
 function closeStaggeredMenu() {
@@ -1360,11 +1355,6 @@ function closeStaggeredMenu() {
     });
     panel.style.opacity = '0';
     panel.style.transform = 'translateX(100%)';
-    var items = panel.querySelectorAll('.sm-panel-itemLabel');
-    items.forEach(function(el) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(50px) rotate(10deg)';
-    });
     if (backdrop) backdrop.classList.remove('open');
     document.body.style.overflow = '';
     return;
@@ -1373,26 +1363,40 @@ function closeStaggeredMenu() {
   if (_smOpenTl) _smOpenTl.kill();
 
   var layers = Array.from(prelayers.querySelectorAll('.sm-prelayer'));
-  var allPanels = layers.concat([panel]);
 
-  if (_smCloseTween) _smCloseTween.kill();
-  _smBusy = true;
-  _smCloseTween = gsap.to(allPanels, {
-    x: '100%', duration: 0.32, ease: 'power3.in',
-    overwrite: 'auto',
-    onComplete: function() {
-      var itemLabels = Array.from(panel.querySelectorAll('.sm-panel-itemLabel'));
-      if (itemLabels.length) gsap.set(itemLabels, { y: 50, rotation: 10, opacity: 0 });
-      if (backdrop) backdrop.classList.remove('open');
-      document.body.style.overflow = '';
-      _smBusy = false;
-    },
-    onKill: function() {
-      _smBusy = false;
-    }
+  // Simple approach: use direct style manipulation
+  // Hide panel first
+  panel.style.transition = 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease';
+  panel.style.transform = 'translateX(100%)';
+  panel.style.opacity = '0';
+
+  // Hide prelayers
+  layers.forEach(function(el, i) {
+    el.style.transition = 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.2s ease';
+    setTimeout(function() {
+      el.style.transform = 'translateX(100%)';
+      el.style.opacity = '0';
+    }, i * 30);
   });
 
-  gsap.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+  // Hide prelayers container
+  setTimeout(function() {
+    prelayers.style.transition = 'opacity 0.2s ease';
+    prelayers.style.opacity = '0';
+  }, 100);
+
+  // Hide backdrop
+  if (backdrop) {
+    backdrop.style.transition = 'opacity 0.2s ease';
+    backdrop.style.opacity = '0';
+  }
+
+  // Cleanup after animation
+  setTimeout(function() {
+    if (backdrop) backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+    _smBusy = false;
+  }, 400);
 }
 
 function _animateSmText(opening) {
