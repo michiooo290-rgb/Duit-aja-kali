@@ -1105,17 +1105,23 @@ select option {
     padding: 20px 16px 92px !important;
   }
 
-  .metric-grid,
-  .charts-grid,
-  .form-grid,
-  .form-grid.three {
-    grid-template-columns: minmax(0, 1fr) !important;
+  /* Tablet: keep a real grid — hero metric spans the full row,
+     the rest sit two-up. Collapsing to one column this early
+     wastes the whole viewport. */
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(110px, auto) !important;
   }
 
   .metric:first-child {
-    grid-column: auto !important;
+    grid-column: 1 / -1 !important;
     grid-row: auto !important;
     min-height: 200px !important;
+  }
+
+  .form-grid,
+  .form-grid.three {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
   .topbar {
@@ -1135,6 +1141,24 @@ select option {
 
   .login-right {
     border-left: none !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .charts-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .metric-grid,
+  .form-grid,
+  .form-grid.three {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .metric:first-child {
+    grid-column: auto !important;
   }
 }
 
