@@ -784,37 +784,6 @@ select option { background: var(--bg-raised); color: var(--text-primary); }
   .filter-bar select { flex: 1; min-width: 0; font-size: 11px; padding: 7px 8px; }
 }
 
-/* ===================== NAV HAMBURGER + MOBILE DRAWER ===================== */
-.nav-hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  width: 32px; height: 32px;
-  background: none; border: none; cursor: pointer;
-  padding: 0; margin-right: 4px; flex-shrink: 0;
-}
-.nav-hamburger-line {
-  width: 18px; height: 2px; border-radius: 2px;
-  background: var(--text-primary);
-  transition: transform 0.25s ease, opacity 0.2s ease;
-}
-.nav-hamburger.is-open .nav-hamburger-line:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.nav-hamburger.is-open .nav-hamburger-line:nth-child(2) { opacity: 0; }
-.nav-hamburger.is-open .nav-hamburger-line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-#nav-backdrop {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 399;
-  opacity: 0;
-}
-@media (max-width: 980px) {
-  .nav-hamburger { display: flex; }
-  #nav-backdrop.open { display: block; }
-}
-
 /* ===================== BOTTOM NAV ===================== */
 .bottom-nav { display: none; }
 @media (max-width: 768px) {

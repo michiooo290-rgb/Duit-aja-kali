@@ -251,14 +251,10 @@ function updateDate() {
 
 function updateRecurringBadge() {
   const due = getDueRecurringCount();
-  const btns = document.querySelectorAll('.nav-btn');
-  btns.forEach(b => {
-    if (b.textContent.includes('Berulang')) {
-      b.innerHTML = due > 0
-        ? `🔁 Berulang <span class="nav-badge">${due}</span>`
-        : '🔁 Berulang';
-    }
-  });
+  const pill = document.querySelector('.pill-item[data-page="berulang"] .pill-label');
+  if (pill) {
+    pill.innerHTML = due > 0 ? `Berulang <span class="nav-badge">${due}</span>` : 'Berulang';
+  }
 }
 
 /* ===== NAVIGATION ===== */
@@ -283,7 +279,7 @@ function showPage(id, btn) {
   inEl.classList.add('active', goRight ? 'slide-in-right' : 'slide-in-left');
   setTimeout(() => inEl.classList.remove('slide-in-right', 'slide-in-left'), 350);
 
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .pill-item').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 
   _currentPage = id;
@@ -591,7 +587,7 @@ function duplicateTx(id) {
   if (!t) return;
 
   // Pindah ke halaman Catat
-  const catBtn = document.querySelector('.nav-btn:nth-child(2)');
+  const catBtn = document.querySelector('.pill-item[data-page="catat"]');
   showPage('catat', catBtn);
   syncBottomNav && syncBottomNav('catat');
 
@@ -1217,65 +1213,23 @@ function syncBottomNav(pageId) {
 }
 
 function syncTopNav(pageId) {
-  document.querySelectorAll('.nav-btn').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${pageId}'`));
+  document.querySelectorAll('.pill-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === pageId);
   });
 }
 
-/* ===== NAV DRAWER (mobile hamburger, GSAP staggered) ===== */
-let _navDrawerOpen = false;
-function toggleNavDrawer() {
-  const nav = document.querySelector('.nav');
-  const backdrop = document.getElementById('nav-backdrop');
-  const hamburger = document.getElementById('nav-hamburger');
-  if (!nav || !backdrop) return;
-
-  if (_navDrawerOpen) {
-    // ---- CLOSE ----
-    _navDrawerOpen = false;
-    hamburger?.setAttribute('aria-expanded', 'false');
-    hamburger?.classList.remove('is-open');
-    backdrop.classList.remove('open');
-    if (window.gsap) {
-      gsap.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.in' });
-      gsap.to(nav, {
-        xPercent: -100, duration: 0.3, ease: 'power3.in',
-        onComplete: () => { nav.classList.remove('mobile-open'); document.body.style.overflow = ''; }
-      });
-    } else {
-      nav.classList.remove('mobile-open');
-      document.body.style.overflow = '';
-    }
-  } else {
-    // ---- OPEN ----
-    _navDrawerOpen = true;
-    hamburger?.setAttribute('aria-expanded', 'true');
-    hamburger?.classList.add('is-open');
-    nav.classList.add('mobile-open');
-    backdrop.classList.add('open');
-    document.body.style.overflow = 'hidden';
-
-    const items = nav.querySelectorAll('.nav-btn');
-    if (window.gsap) {
-      gsap.set(nav, { xPercent: -100 });
-      gsap.set(backdrop, { opacity: 0 });
-      gsap.set(items, { x: -24, opacity: 0 });
-      gsap.to(backdrop, { opacity: 1, duration: 0.25, ease: 'power2.out' });
-      gsap.to(nav, { xPercent: 0, duration: 0.4, ease: 'power4.out' });
-      gsap.to(items, {
-        x: 0, opacity: 1, duration: 0.45, ease: 'power3.out',
-        stagger: { each: 0.045, from: 'start' }, delay: 0.08
-      });
-    }
-  }
-}
-function closeNavDrawer() {
-  if (_navDrawerOpen) toggleNavDrawer();
-}
-// auto-close the drawer whenever a nav item is picked on mobile
+/* ===== PILL NAV (desktop top bar, GSAP hover-circle) ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.nav .nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => { if (_navDrawerOpen) closeNavDrawer(); });
+  document.querySelectorAll('.pill-nav-wrap .pill-item').forEach(pill => {
+    const circle = pill.querySelector('.pill-hover-circle');
+    if (!circle || !window.gsap) return;
+    gsap.set(circle, { yPercent: 100 });
+    pill.addEventListener('mouseenter', () => {
+      gsap.to(circle, { yPercent: 0, duration: 0.35, ease: 'power3.out', overwrite: 'auto' });
+    });
+    pill.addEventListener('mouseleave', () => {
+      gsap.to(circle, { yPercent: 100, duration: 0.25, ease: 'power3.in', overwrite: 'auto' });
+    });
   });
 });
 
@@ -1772,7 +1726,7 @@ function renderGlobalSearch() {
 function gsearchJump(id) {
   closeGlobalSearch();
   // buka riwayat dan highlight transaksi
-  const navBtn = document.querySelector('.nav-btn:nth-child(4)');
+  const navBtn = document.querySelector('.pill-item[data-page="riwayat"]');
   showPage('riwayat', navBtn);
   setTimeout(() => {
     const inp = document.getElementById('search-input');
@@ -1788,7 +1742,7 @@ function gsearchJump(id) {
 
 function gsearchShowAll(q) {
   closeGlobalSearch();
-  const navBtn = document.querySelector('.nav-btn:nth-child(4)');
+  const navBtn = document.querySelector('.pill-item[data-page="riwayat"]');
   showPage('riwayat', navBtn);
   setTimeout(() => {
     const inp = document.getElementById('search-input');
@@ -2525,7 +2479,7 @@ document.addEventListener('keydown', function(e) {
   // N — ke halaman Catat
   if ((e.key === 'n' || e.key === 'N') && !e.ctrlKey && !e.metaKey) {
     e.preventDefault();
-    const btn = document.querySelector('.nav-btn:nth-child(2)');
+    const btn = document.querySelector('.pill-item[data-page="catat"]');
     showPage('catat', btn);
     syncBottomNav && syncBottomNav('catat');
     setTimeout(() => document.getElementById('inp-desc')?.focus(), 200);
@@ -2537,7 +2491,7 @@ document.addEventListener('keydown', function(e) {
     e.preventDefault();
     const pageId = navMap[e.key];
     const idx    = PAGE_ORDER.indexOf(pageId) + 1;
-    const btn    = document.querySelector(`.nav-btn:nth-child(${idx})`);
+    const btn    = document.querySelector(`.pill-item[data-page="${pageId}"]`);
     showPage(pageId, btn);
     syncBottomNav && syncBottomNav(pageId);
     return;

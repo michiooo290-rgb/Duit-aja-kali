@@ -107,11 +107,6 @@
 
   <div class="topbar">
     <div class="topbar-brand">
-      <button class="nav-hamburger" id="nav-hamburger" onclick="toggleNavDrawer()" aria-label="Buka menu navigasi" aria-expanded="false">
-        <span class="nav-hamburger-line"></span>
-        <span class="nav-hamburger-line"></span>
-        <span class="nav-hamburger-line"></span>
-      </button>
       <div class="topbar-logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5z" stroke="white" stroke-width="1.5" fill="none"/><path d="M12 6v6l5 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="white"/></svg></div>
       <div>
         <div class="topbar-title">Duit Tracker Pro</div>
@@ -144,20 +139,20 @@
     </div>
   </div>
 
-  <div id="nav-backdrop" onclick="toggleNavDrawer()"></div>
-
-  <nav class="nav">
-    <button class="nav-btn active" onclick="showPage('dashboard',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🏠</span> Dashboard</button>
-    <button class="nav-btn" onclick="showPage('catat',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">✏️</span> Catat</button>
-    <button class="nav-btn" onclick="showPage('berulang',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🔁</span> Berulang</button>
-    <button class="nav-btn" onclick="showPage('riwayat',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📋</span> Riwayat</button>
-    <button class="nav-btn" onclick="showPage('analisa',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📊</span> Analisa</button>
-    <button class="nav-btn" onclick="showPage('ekspor',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📤</span> Ekspor</button>
-    <button class="nav-btn" onclick="showPage('tabungan',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🐷</span> Tabungan</button>
-    <button class="nav-btn" onclick="showPage('target',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">🎯</span> Target</button>
-    <button class="nav-btn" onclick="showPage('pengaturan',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">⚙️</span> Pengaturan</button>
-    <button class="nav-btn" onclick="showPage('kalender',this)"><span class="em-icon" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;font-size:13px;line-height:1">📅</span> Kalender</button>
-  </nav>
+  <div class="pill-nav-wrap">
+    <ul class="pill-list">
+      <li><a class="pill-item active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="pill-hover-circle"></span><span class="pill-label">Dashboard</span></a></li>
+      <li><a class="pill-item" data-page="catat" onclick="showPage('catat',this)"><span class="pill-hover-circle"></span><span class="pill-label">Catat</span></a></li>
+      <li><a class="pill-item" data-page="berulang" onclick="showPage('berulang',this)"><span class="pill-hover-circle"></span><span class="pill-label">Berulang</span></a></li>
+      <li><a class="pill-item" data-page="riwayat" onclick="showPage('riwayat',this)"><span class="pill-hover-circle"></span><span class="pill-label">Riwayat</span></a></li>
+      <li><a class="pill-item" data-page="analisa" onclick="showPage('analisa',this)"><span class="pill-hover-circle"></span><span class="pill-label">Analisa</span></a></li>
+      <li><a class="pill-item" data-page="ekspor" onclick="showPage('ekspor',this)"><span class="pill-hover-circle"></span><span class="pill-label">Ekspor</span></a></li>
+      <li><a class="pill-item" data-page="tabungan" onclick="showPage('tabungan',this)"><span class="pill-hover-circle"></span><span class="pill-label">Tabungan</span></a></li>
+      <li><a class="pill-item" data-page="target" onclick="showPage('target',this)"><span class="pill-hover-circle"></span><span class="pill-label">Target</span></a></li>
+      <li><a class="pill-item" data-page="pengaturan" onclick="showPage('pengaturan',this)"><span class="pill-hover-circle"></span><span class="pill-label">Pengaturan</span></a></li>
+      <li><a class="pill-item" data-page="kalender" onclick="showPage('kalender',this)"><span class="pill-hover-circle"></span><span class="pill-label">Kalender</span></a></li>
+    </ul>
+  </div>
 
   <div class="main">
 
