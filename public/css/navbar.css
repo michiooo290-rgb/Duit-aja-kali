@@ -1,0 +1,218 @@
+/* ============================================================
+   NAVBAR.CSS — Floating pill topbar (React Bits style)
+   Loaded AFTER hallmark-ledger.css so its overrides win.
+   Layout: [hamburger] ......... [centered brand] ......... [actions]
+   ============================================================ */
+
+/* ── Container: floating rounded pill ── */
+.topbar {
+  grid-column: 1 / -1 !important;
+  position: sticky !important;
+  top: 12px !important;
+  z-index: 120 !important;
+
+  height: 62px !important;
+  margin: 12px 16px 4px !important;
+  padding: 0 10px 0 14px !important;
+
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-rule) !important;
+  border-bottom: 1px solid var(--color-rule) !important;
+  border-radius: var(--radius-pill) !important;
+  box-shadow: 0 1px 2px oklch(0% 0 0 / 0.04), 0 8px 24px oklch(0% 0 0 / 0.06) !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+[data-theme="dark"] .topbar {
+  box-shadow: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 24px oklch(0% 0 0 / 0.35) !important;
+}
+
+/* ── Left: hamburger only ── */
+.topbar-left {
+  display: flex !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+}
+
+/* Hamburger: clear circular hit target */
+.sm-toggle {
+  width: 40px !important;
+  height: 40px !important;
+  justify-content: center !important;
+  border: 1px solid var(--color-rule) !important;
+  border-radius: 50% !important;
+  background: var(--color-paper-2) !important;
+  transition: background var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out) !important;
+}
+.sm-toggle:hover {
+  background: var(--color-surface-2) !important;
+  border-color: var(--color-rule-strong) !important;
+}
+
+/* ── Center: brand, absolutely centered like React Bits ── */
+.topbar-brand {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+}
+
+.topbar-logo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  background: var(--color-ink) !important;
+  box-shadow: none !important;
+  animation: none !important;
+  flex-shrink: 0 !important;
+}
+
+[data-theme="dark"] .topbar-logo svg path,
+[data-theme="dark"] .topbar-logo svg circle {
+  stroke: var(--color-paper);
+}
+[data-theme="dark"] .topbar-logo svg circle { fill: var(--color-paper); }
+
+.topbar-title {
+  font-family: var(--font-label) !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+  color: var(--color-ink) !important;
+  line-height: 1.15 !important;
+}
+
+/* Tagline: hidden for the clean pill look */
+.topbar-sub {
+  display: none !important;
+}
+
+/* ── Right: actions cluster ── */
+.topbar-actions {
+  position: relative !important;
+  z-index: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+/* Date chip — quiet, only on wide screens */
+.topbar-date {
+  font-size: var(--text-xs) !important;
+  color: var(--color-muted) !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+}
+@media (max-width: 1199px) {
+  .topbar-date { display: none !important; }
+}
+
+/* Cari + theme toggle: ghost pills that sit quietly inside the bar */
+.global-search-trigger,
+.theme-toggle {
+  height: 36px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  border-radius: var(--radius-pill) !important;
+  color: var(--color-muted) !important;
+}
+.global-search-trigger:hover,
+.theme-toggle:hover {
+  background: var(--color-paper-2) !important;
+  border-color: var(--color-rule) !important;
+  color: var(--color-ink) !important;
+}
+
+/* ── User badge → dark "Get Started"-style pill ── */
+.user-badge {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: var(--color-ink) !important;
+  border: 1px solid var(--color-ink) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 5px 14px 5px 6px !important;
+  box-shadow: none !important;
+  transition: opacity var(--dur-short) var(--ease-out) !important;
+}
+.user-badge:hover { opacity: 0.85 !important; }
+
+.user-badge-avatar {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: var(--color-paper) !important;
+  color: var(--color-ink) !important;
+  font-size: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.user-badge #topbar-username {
+  font-size: var(--text-sm) !important;
+  font-weight: 700 !important;
+  color: var(--color-paper) !important;
+  line-height: 1.2 !important;
+}
+.user-badge-logout {
+  font-size: 10px !important;
+  color: oklch(from var(--color-paper) l 0 0 / 0.65) !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+/* Note: tokens self-invert in dark mode (--color-ink becomes light),
+   so the badge automatically flips to a light pill with dark text. */
+
+/* ── Saldo badge: quiet ghost pill matching Cari/theme toggle ── */
+.topbar-balance-badge {
+  height: 36px !important;
+  background: transparent !important;
+  border: 1px solid var(--color-rule) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 0 12px !important;
+}
+.topbar-balance-badge:hover {
+  background: var(--color-paper-2) !important;
+  border-color: var(--color-rule-strong) !important;
+}
+
+/* ── Responsive ── */
+
+/* Below 860px the centered brand could collide with actions:
+   dock it next to the hamburger instead */
+@media (max-width: 859px) {
+  .topbar-brand {
+    position: static !important;
+    transform: none !important;
+    margin-left: 4px !important;
+  }
+  .topbar-title { font-size: 0.95rem !important; }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    height: 54px !important;
+    top: 8px !important;
+    margin: 8px 10px 2px !important;
+    padding: 0 8px 0 10px !important;
+  }
+  .topbar-logo { display: flex !important; width: 26px !important; height: 26px !important; }
+  .topbar-logo svg { width: 14px !important; height: 14px !important; }
+  .topbar-title { font-size: 0.85rem !important; }
+  .user-badge { padding: 4px 6px !important; gap: 0 !important; }
+  .user-badge #topbar-username,
+  .user-badge-logout { display: none !important; }
+}
