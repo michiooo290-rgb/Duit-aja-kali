@@ -367,37 +367,42 @@ button[onclick="saveEditTarget()"] {
   position: sticky !important;
   top: 68px !important;
   z-index: 110 !important;
-  background: var(--color-paper-2) !important;
-  border-bottom: var(--rule-strong) !important;
-  padding: 10px 20px !important;
+  background: var(--color-paper) !important;
+  border-bottom: var(--rule-hairline) !important;
+  padding: 14px 20px !important;
   overflow-x: auto !important;
+  overflow-y: visible !important;
   white-space: nowrap !important;
 }
 
 .pill-list {
   display: inline-flex !important;
-  gap: 6px !important;
+  gap: 8px !important;
   list-style: none !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 2px !important;
 }
+
+.pill-list > li { display: flex !important; }
 
 .pill-item {
   display: inline-flex !important;
   align-items: center !important;
-  height: 34px !important;
-  padding: 0 18px !important;
+  height: 38px !important;
+  padding: 0 20px !important;
   border-radius: 9999px !important;
-  border: var(--rule-hairline) !important;
+  border: 1.5px solid transparent !important;
   background: var(--color-surface) !important;
   color: var(--color-muted) !important;
   font-family: var(--font-label) !important;
-  font-size: var(--text-sm) !important;
-  font-weight: 750 !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
   text-decoration: none !important;
   cursor: pointer !important;
   position: relative !important;
   overflow: hidden !important;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease !important;
 }
 
 .pill-item .pill-hover-circle {
@@ -406,7 +411,7 @@ button[onclick="saveEditTarget()"] {
   bottom: 0 !important;
   width: 160% !important;
   padding-bottom: 160% !important;
-  background: var(--color-ink) !important;
+  background: color-mix(in oklch, var(--color-accent) 14%, transparent) !important;
   border-radius: 50% !important;
   transform: translate(-50%, 100%) !important;
   z-index: 0 !important;
@@ -415,12 +420,21 @@ button[onclick="saveEditTarget()"] {
 
 .pill-item .pill-label { position: relative !important; z-index: 2 !important; }
 
-.pill-item:hover,
-.pill-item.active {
-  color: var(--color-paper) !important;
-  border-color: var(--color-ink) !important;
+.pill-item:hover {
+  color: var(--color-ink) !important;
+  border-color: var(--color-rule) !important;
+  transform: translateY(-1px) !important;
 }
-.pill-item.active { background: var(--color-ink) !important; }
+
+.pill-item.active {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: var(--color-paper) !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 10px color-mix(in oklch, var(--color-accent) 35%, transparent) !important;
+}
+
+.pill-item.active:hover { transform: none !important; }
 
 .main {
   grid-column: 1 !important;
