@@ -393,9 +393,8 @@ button[onclick="saveEditTarget()"] {
   position: fixed !important; inset: 0 !important;
   background: rgba(20,18,15,0.45) !important;
   z-index: 398 !important;
-  opacity: 0 !important;
 }
-.sm-backdrop.open { display: block !important; }
+.sm-backdrop.open { display: block !important; opacity: 1 !important; }
 
 .sm-panel {
   position: fixed !important;
