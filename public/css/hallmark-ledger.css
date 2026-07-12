@@ -485,7 +485,6 @@ button[onclick="saveEditTarget()"] {
   padding: 6em 2em 2em 2em !important;
   overflow-y: auto !important;
   pointer-events: auto !important;
-  opacity: 0 !important;
 }
 
 .sm-panel-header {
