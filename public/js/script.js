@@ -1255,10 +1255,22 @@ function openStaggeredMenu() {
   _animateSmText(true);
 
   if (!window.gsap) {
-    panel.style.transform = 'translateX(0)';
-    panel.style.opacity = '1';
+    // Fallback without GSAP
     if (backdrop) backdrop.style.opacity = '1';
     prelayers.style.opacity = '1';
+    prelayers.style.transform = 'translateX(0)';
+    var prelayerEls = prelayers.querySelectorAll('.sm-prelayer');
+    prelayerEls.forEach(function(el) {
+      el.style.opacity = '1';
+      el.style.transform = 'translateX(0)';
+    });
+    panel.style.opacity = '1';
+    panel.style.transform = 'translateX(0)';
+    var items = panel.querySelectorAll('.sm-panel-itemLabel');
+    items.forEach(function(el) {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0) rotate(0)';
+    });
     _smBusy = false;
     return;
   }
@@ -1270,13 +1282,13 @@ function openStaggeredMenu() {
   var layers = Array.from(prelayers.querySelectorAll('.sm-prelayer'));
   var itemLabels = Array.from(panel.querySelectorAll('.sm-panel-itemLabel'));
 
-  // Set initial states
+  // Reset to initial states first
   gsap.set(backdrop, { opacity: 0 });
-  gsap.set(prelayers, { opacity: 1 });
-  var allPanels = [panel].concat(layers);
-  gsap.set(allPanels, { xPercent: 100, opacity: 1 });
+  gsap.set(prelayers, { opacity: 1, x: 0 });
+  gsap.set(layers, { x: '100%', opacity: 1 });
+  gsap.set(panel, { x: '100%', opacity: 1 });
   if (itemLabels.length) {
-    gsap.set(itemLabels, { yPercent: 140, rotate: 10, opacity: 0 });
+    gsap.set(itemLabels, { y: 50, opacity: 0, rotation: 10 });
   }
 
   // Build timeline
@@ -1286,12 +1298,12 @@ function openStaggeredMenu() {
 
   // Stagger prelayers
   layers.forEach(function(layer, i) {
-    tl.to(layer, { xPercent: 0, duration: 0.5, ease: 'power4.out' }, i * 0.07);
+    tl.to(layer, { x: '0%', duration: 0.5, ease: 'power4.out' }, i * 0.07);
   });
 
   // Panel slides in after prelayers
   var panelInsertTime = layers.length ? (layers.length - 1) * 0.07 + 0.08 : 0;
-  tl.to(panel, { xPercent: 0, duration: 0.65, ease: 'power4.out' }, panelInsertTime);
+  tl.to(panel, { x: '0%', duration: 0.65, ease: 'power4.out' }, panelInsertTime);
 
   // Backdrop fades in
   tl.to(backdrop, { opacity: 1, duration: 0.3, ease: 'power2.out' }, panelInsertTime);
@@ -1300,7 +1312,7 @@ function openStaggeredMenu() {
   if (itemLabels.length) {
     var itemsStart = panelInsertTime + 0.65 * 0.15;
     tl.to(itemLabels, {
-      yPercent: 0, rotate: 0, opacity: 1,
+      y: 0, rotation: 0, opacity: 1,
       duration: 1, ease: 'power4.out',
       stagger: { each: 0.1, from: 'start' }
     }, itemsStart);
@@ -1330,10 +1342,21 @@ function closeStaggeredMenu() {
   _animateSmText(false);
 
   if (!window.gsap) {
-    panel.style.transform = 'translateX(100%)';
-    panel.style.opacity = '0';
+    // Fallback without GSAP
     if (backdrop) backdrop.style.opacity = '0';
     prelayers.style.opacity = '0';
+    var prelayerEls = prelayers.querySelectorAll('.sm-prelayer');
+    prelayerEls.forEach(function(el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(100%)';
+    });
+    panel.style.opacity = '0';
+    panel.style.transform = 'translateX(100%)';
+    var items = panel.querySelectorAll('.sm-panel-itemLabel');
+    items.forEach(function(el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(50px) rotate(10deg)';
+    });
     if (backdrop) backdrop.classList.remove('open');
     document.body.style.overflow = '';
     return;
@@ -1346,11 +1369,11 @@ function closeStaggeredMenu() {
 
   if (_smCloseTween) _smCloseTween.kill();
   _smCloseTween = gsap.to(allPanels, {
-    xPercent: 100, duration: 0.32, ease: 'power3.in',
+    x: '100%', duration: 0.32, ease: 'power3.in',
     overwrite: 'auto',
     onComplete: function() {
       var itemLabels = Array.from(panel.querySelectorAll('.sm-panel-itemLabel'));
-      if (itemLabels.length) gsap.set(itemLabels, { yPercent: 140, rotate: 10, opacity: 0 });
+      if (itemLabels.length) gsap.set(itemLabels, { y: 50, rotation: 10, opacity: 0 });
       if (backdrop) backdrop.classList.remove('open');
       document.body.style.overflow = '';
     }
