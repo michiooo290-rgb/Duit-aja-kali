@@ -1222,6 +1222,63 @@ function syncTopNav(pageId) {
   });
 }
 
+/* ===== NAV DRAWER (mobile hamburger, GSAP staggered) ===== */
+let _navDrawerOpen = false;
+function toggleNavDrawer() {
+  const nav = document.querySelector('.nav');
+  const backdrop = document.getElementById('nav-backdrop');
+  const hamburger = document.getElementById('nav-hamburger');
+  if (!nav || !backdrop) return;
+
+  if (_navDrawerOpen) {
+    // ---- CLOSE ----
+    _navDrawerOpen = false;
+    hamburger?.setAttribute('aria-expanded', 'false');
+    hamburger?.classList.remove('is-open');
+    backdrop.classList.remove('open');
+    if (window.gsap) {
+      gsap.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.in' });
+      gsap.to(nav, {
+        xPercent: -100, duration: 0.3, ease: 'power3.in',
+        onComplete: () => { nav.classList.remove('mobile-open'); document.body.style.overflow = ''; }
+      });
+    } else {
+      nav.classList.remove('mobile-open');
+      document.body.style.overflow = '';
+    }
+  } else {
+    // ---- OPEN ----
+    _navDrawerOpen = true;
+    hamburger?.setAttribute('aria-expanded', 'true');
+    hamburger?.classList.add('is-open');
+    nav.classList.add('mobile-open');
+    backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    const items = nav.querySelectorAll('.nav-btn');
+    if (window.gsap) {
+      gsap.set(nav, { xPercent: -100 });
+      gsap.set(backdrop, { opacity: 0 });
+      gsap.set(items, { x: -24, opacity: 0 });
+      gsap.to(backdrop, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+      gsap.to(nav, { xPercent: 0, duration: 0.4, ease: 'power4.out' });
+      gsap.to(items, {
+        x: 0, opacity: 1, duration: 0.45, ease: 'power3.out',
+        stagger: { each: 0.045, from: 'start' }, delay: 0.08
+      });
+    }
+  }
+}
+function closeNavDrawer() {
+  if (_navDrawerOpen) toggleNavDrawer();
+}
+// auto-close the drawer whenever a nav item is picked on mobile
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav .nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => { if (_navDrawerOpen) closeNavDrawer(); });
+  });
+});
+
 function openMoreMenu() {
   const sheet = document.getElementById('more-menu-sheet');
   sheet.style.display = 'block';
